@@ -18,4 +18,4 @@ The data files that are missing are:
   - This can be obtained from SciMago: https://www.scimagojr.com/
 
 - Survey data
- - This cannot currently be obtained without permission. If uploaded, will be on the OSF.
+  - This cannot currently be obtained without permission. If uploaded, will be on the OSF.
