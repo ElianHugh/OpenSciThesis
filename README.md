@@ -1,5 +1,7 @@
 # OpenSciThesis
- 
+
+To run, source the make.R file
+
 ### Code for my Honours thesis on open science practice
 
 This repository contains the R code for my honours thesis analysis. It uses the drake package (see: https://github.com/ropensci/drake) and Miles McBain's dflow (https://github.com/MilesMcBain/dflow) for structuring the file base. 
