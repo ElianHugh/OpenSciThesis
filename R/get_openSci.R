@@ -5,7 +5,7 @@
 ##' @param
 ##' @return
 ##' @author
-##' @export
+##' @exportwb
 
 get_openSci <- function() {
       openSci <- read_csv(file_in("data/OSF_data.csv"),

@@ -39,6 +39,7 @@ combinedTableSJR %<>%
 # Quirk that converts logical to integer by multiplying by 1
 combinedTableSJR %<>%
   mutate_at(
+    # ! error check for pubished!!
     # vars(c(Submitted, Published, Accepted)),
     vars(c(Submitted,Accepted)),
     (function(x) x*1)
@@ -47,7 +48,8 @@ combinedTableSJR %<>%
 # Sum the columns 
 # ! ADD PUBLISHED TO THIS LIST!
 combinedTableSJR %<>%
-  mutate(`Open Science Score` = select(., c(Submitted, Accepted, DataTransparency, DesignAnalysis, Preregistration, Replication, Materials, AnalysisPreReg, RegRepPubBias)) %>%
+  mutate(`Open Science Score` = select(., c(DataTransparency, DesignAnalysis, Preregistration, Replication, Materials, AnalysisPreReg, RegRepPubBias)) %>%
+  #mutate(`Open Science Score` = select(., c(Submitted, Accepted, DataTransparency, DesignAnalysis, Preregistration, Replication, Materials, AnalysisPreReg, RegRepPubBias)) %>%
   rowSums(na.rm = TRUE)
   )
 
