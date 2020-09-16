@@ -9,7 +9,7 @@
 
 get_key <- function() {
   
-  key <- read_file('data/api-key.txt') 
+  key <- read_file(file_in("data/api-key.txt"))
 
   return(key)
 }

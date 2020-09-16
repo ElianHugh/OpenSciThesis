@@ -1,66 +1,4 @@
-library(drake)
-library(readr)
-library(magrittr)
-library(tidyverse)
-library(withr)
-
-citeScore <- read_csv("data/CiteScore.csv")
-loadd(topFactor)
-
-# https://alistaire.rbind.io/blog/coalescing-joins/
-coalesce_join <- function(x, y, 
-                          by = NULL, suffix = c(".x", ".y"), 
-                          join = dplyr::full_join, ...) {
-    joined <- join(x, y, by = by, suffix = suffix, ...)
-    # names of desired output
-    cols <- union(names(x), names(y))
-    
-    to_coalesce <- names(joined)[!names(joined) %in% cols]
-    suffix_used <- suffix[ifelse(endsWith(to_coalesce, suffix[1]), 1, 2)]
-    # remove suffixes and deduplicate
-    to_coalesce <- unique(substr(
-        to_coalesce, 
-        1, 
-        nchar(to_coalesce) - nchar(suffix_used)
-    ))
-    
-    coalesced <- purrr::map_dfc(to_coalesce, ~dplyr::coalesce(
-        joined[[paste0(.x, suffix[1])]], 
-        joined[[paste0(.x, suffix[2])]]
-    ))
-    names(coalesced) <- to_coalesce
-    
-    dplyr::bind_cols(joined, coalesced)[cols]
-}
-
-# My little function
-checkmatch <- function(x, y) {
-    if ((str_detect(x, "\\s")) && (str_detect(y, "\\s"))) {
-        return(TRUE)
-    } else {
-        if (!(str_detect(x, "\\s")) && !(str_detect(y, "\\s"))) {
-            return(FALSE)
-        } else {
-            return(TRUE)
-        }
-    }
-}
-
-
-topFactor %<>%
-    rename(
-        DataTransparency = `Data transparency score`,
-        AnalysisTransparency = `Analysis code transparency score`,
-        MaterialsTransparency = `Materials transparency score`,
-        DesignAnalysis = `Design & analysis reporting guidelines score`,
-        Preregistration = `Study preregistration score`,
-        Replication = `Replication score`,
-        AnalysisPreReg = `Analysis plan preregistration score`,
-        RegRepPubBias = `Registered reports & publication bias score`,
-        DataTransparency = `Data transparency score`,
-        DataCitation = `Data citation score`,
-        Badges = `Open science badges score`
-    )
+analyse_citescore <- function(topFactor, citeScore) {
 
 citeScore %<>%
     select(Title, Publisher, CiteScore, SJR, `Top 10% (CiteScore Percentile)`, `Scopus Sub-Subject Area`, `Print ISSN`, `E-ISSN`) %>%
@@ -68,6 +6,7 @@ citeScore %<>%
     pivot_longer(c("ISSN", "ISSN2"), names_repair = "unique") %>%
     rename(ISSN = value, Top10Perc = `Top 10% (CiteScore Percentile)`)
 citeScore$name <- NULL
+
 # For some reason SCOPUS has messed up the ISSNs...
 # ! Have to add the leading zeros
 
@@ -76,12 +15,9 @@ citeScore$ISSN <- with_options(
       str_pad(citeScore$ISSN, 8, pad = "0") 
     )
 
-
-# testjoin
 df <- left_join(topFactor, citeScore)
-
 # Take out the garbage
-print("Retry 1")
+message("Retry 1")
 x <- df[is.na(df$`Scopus Sub-Subject Area`), ] %>%
     select(
         Title,
@@ -100,7 +36,6 @@ x <- df[is.na(df$`Scopus Sub-Subject Area`), ] %>%
         Badges
     )
 df <- anti_join(df, x, by="Title")
-
 y <- fuzzyjoin::stringdist_left_join(x, citeScore, by = "Title", max_dist = 3, distance_col = "Distance")
 
 closest <- y %>%
@@ -138,16 +73,10 @@ x <- y[is.na(y$`Title.y`), ] %>%
         Badges
     ) %>%
     rename(Title = Title.x, ISSN = ISSN.x, Publisher = Publisher.x)
-#! this one doesnt make sense
-# df <- anti_join(df, x, by = "Title")
 
 # ! Fuzzy match again
 y <- fuzzyjoin::stringdist_left_join(x, citeScore, by = "Title", max_dist = 4, distance_col = "Distance")
-
 x <- y[is.na(y$`Title.y`), ]
-
-# Remove NAs from Y so that we can check if the resultant # vectors are correct (can't map with unequal vectors)
-
 y <- anti_join(y, x)
 
 # ? We combine two columns into a list for iteration
@@ -159,21 +88,15 @@ y %<>%
     mutate(Keep = checkmatch(Title.x, Title.y)) %>%
     dplyr::filter(Keep == TRUE)
 
-# ! Remove:
-# ! Stigma and Health (mismatch)
-# ! Journal of Cognition (mismatch)
-# ! Motivation Science (mismatch)
-# ! Social Psychological Bulletin (mismatch)
-# ! Brain Communications
-# ! Journal Of Comparative Psychology
 # Manual checks
 y %<>%
-    dplyr::filter(Title.x != 'Motivation Science') %>%
-    dplyr::filter(Title.x != 'Stigma and Health') %>%
-    dplyr::filter(Title.x != 'Journal of Cognition') %>%
-    dplyr::filter(Title.x != 'Social Psychological Bulletin') %>% 
-    dplyr::filter(Title.x != 'Brain Communications') %>%
-    dplyr::filter(Title.x != 'Journal Of Comparative Psychology') %>%
+    dplyr::filter(Title.x != "Motivation Science") %>%
+    dplyr::filter(Title.x != "Stigma and Health") %>%
+    dplyr::filter(Title.x != "Journal of Cognition") %>%
+    dplyr::filter(Title.x != "Social Psychological Bulletin") %>%
+    dplyr::filter(Title.x != "Brain Communications") %>%
+    dplyr::filter(Title.x != "Journal Of Comparative Psychology") %>%
+    dplyr::filter(Title.x != 'Meta-Psychology') %>%
     rename(
     Title = Title.x,
     MatchTitle = Title.y,
@@ -183,11 +106,16 @@ y %<>%
     select(-c(Publisher.y, ISSN.y, Distance, Keep))
 df <- coalesce_join(df, y, by = "Title")
 
-df$OSS  <- df %>%
-    select(DataCitation:Badges) %>%
-    rowSums(na.rm=TRUE)
+    
 
 df %<>%
+    mutate_at(vars(DataCitation:Badges), ~ case_when(
+        . == 3 ~ 1,
+        . == 2 ~ 1,
+        . == 1 ~ 1,
+        . == 0 ~ 0
+    )) %>%
+    # ! 
     rename(SubjectArea = `Scopus Sub-Subject Area`) %>%
     mutate(Discipline = case_when(
        SubjectArea == "Agricultural and Biological Sciences (miscellaneous)" ~ "Agricultural and Biological Sciences",
@@ -551,64 +479,64 @@ SubjectArea == "Veterinary (miscellaneous)" ~ "Veterinary",
 SubjectArea == "General Business,Management and Accounting" ~ "Business, Management and Accounting",
 SubjectArea == "General Biochemistry,Genetics and Molecular Biology" ~ "Biochemistry,Genetics and Molecular Biology",
 TRUE ~ "Other"
-    ))
+    )) %>%
+    mutate(GroupedDisc = case_when(
+      # Math, Chem, Enviro, & Bio Sciences
+      Discipline == "Chemistry" ~ "Math, Chem, Enviro, & Bio Sciences",
+      Discipline == "Agricultural and Biological Sciences" ~ "Math, Chem, Enviro, & Bio Sciences",
+      Discipline == "Biochemistry, Genetics and Molecular Biology" ~ "Math, Chem, Enviro, & Bio Sciences",
+      Discipline == "Biochemistry,Genetics and Molecular Biology" ~ "Math, Chem, Enviro, & Bio Sciences",
+      Discipline == "Environmental Science" ~ "Math, Chem, Enviro, & Bio Sciences",
+      Discipline == "Mathematics" ~ "Math, Chem, Enviro, & Bio Sciences",
 
-library(gtools)
+      # Physical Sciences
+      Discipline == "Earth and Planetary Sciences" ~ "Physical Sciences",
+      Discipline == "Physics and Astronomy" ~ "Physical Sciences",
+      # Tech & Comp Sciences
+      Discipline == "Computer Science" ~ "Tech & Comp. Sciences",
+
+      # Engineering
+      Discipline == "Engineering" ~ "Engineering",
+
+      # Medical & Health Sciences
+      Discipline == "Medicine" ~ "Medical & Health Sciences",
+      Discipline == "Health Professions" ~ "Medical & Health Sciences",
+      Discipline == "Nursing" ~ "Medical & Health Sciences",
+      Discipline == "Pharmacology, Toxicology and Pharmaceutics" ~ "Medical & Health Sciences",
+
+      # ASSH
+      Discipline == "Arts and Humanities" ~ "ASSH",
+      Discipline == "Social Sciences" ~ "ASSH",
+      # Business & Law
+      Discipline == "Business, Management and Accounting" ~ "Business",
+      
+      # Psych & Cog Sciences
+      Discipline == "Psychology" ~ "Psych. & Cog. Sciences",
+      Discipline == "Neuroscience" ~ "Psych. & Cog. Sciences",
+      TRUE ~ "Other"
+      
+    ))
+df$OSS <- df %>%
+    select(DataCitation:Badges) %>%
+    rowSums(na.rm=TRUE)
 
 df %<>% mutate(
     ScoreGrade = quantcut(df$OSS, q = 5) 
-    )
+) %>%
+        dplyr::filter(Top10Perc == TRUE)
+
+df %<>%
+    group_by(GroupedDisc) %>%
+    distinct(Title, .keep_all = TRUE) %>%
+    add_tally()
 levels(df$ScoreGrade) <- c("None","Low", 
     "Medium","High", "Very High")
 
 
-p <- df %>% ggscatterhist(
-  x = "OSS", y = "CiteScore",
-  color = "Discipline", size = 3, alpha = 0.6,
-  # palette = c("#00AFBB", "#E7B800", "#FC4E07"),
-  margin.params = list(fill = "Discipline", color = "black", size = 0.2)
-)
+# ! I don't why this doesn't work above but...
+df %<>%
+    dplyr::filter(Title != 'Meta-Psychology')
 
-library(ggridges)
-ridge <- df %>%
-    distinct(Title, .keep_all = TRUE) %>%
-     mutate(ScoreGrade = factor(ScoreGrade, levels=c("Very High", "High", "Medium", "Low", "None"))) %>%
-    ggplot(aes(y=ScoreGrade, x=CiteScore, fill = factor(stat(quantile)))) +
-  stat_density_ridges(jittered_points = TRUE, position = "raincloud",
-    alpha = 0.5, scale=1.5,geom = "density_ridges_gradient", calc_ecdf = TRUE,
-    quantiles = 4, quantile_lines = TRUE
-  ) +  scale_y_discrete(expand = c(0, 0)) + 
-  scale_x_continuous(expand = c(0, 0)) +
-  scale_fill_viridis_d(name = "Quartiles") + 
-  theme_ridges(grid = FALSE, center_axis_labels = TRUE)
+return(df)
 
-
-x <- df %>%
-  filter(Top10Perc == TRUE) %>%
-    group_by(Discipline) %>%
-     distinct(Title, .keep_all = TRUE) %>%
-    add_tally()
-
-
-# Top10 Journals
-graphdf <- x %>%
-    # distinct(Title, .keep_all = TRUE) %>%
-    # filter(Top10Perc == TRUE) %>%
-    filter(n > 10) %>%
-    mutate(discN = paste0(Discipline, ", n = ", n)) %>%
-    pivot_longer(DataCitation:Badges, names_to = "Open Science Practice", values_to = "value") %>%
-    mutate(
-      value = case_when(
-        value == 0 ~ 0,
-        value == 1 ~ 1,
-        value == 2 ~ 1,
-      )
-    ) %>%
-    ggplot(aes(x=`Open Science Practice`,y=value))  +
-    stat_summary(
-      fun.min = min,
-      fun.max = max,
-      fun = mean,
-      geom = "bar"
-    ) + facet_wrap(~discN,
-                        scales="free_x") + coord_flip() + ggtitle("Percentage of Open Science Practice Policies for Top 10% Ranked Journals")
+}

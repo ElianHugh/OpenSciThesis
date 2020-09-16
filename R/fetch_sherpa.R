@@ -1,11 +1,17 @@
-#' title
-#' @param param
-#' @return return
-#' @author author
-#' @export
-fetch_sherpa <- function(masterList, journalSJR, key) {
+fetch_sherpa <- function(combinedCite, key){
 
-# Pre-Allocation... because it might speed up iteration?
+# ! Take in topFactor ISSNs and check them
+# ! change omit to omit only issns
+journals <- combinedCite %>%
+    ungroup()
+journals$ISSN <- gsub("[[:space:]]", "", journals$ISSN)
+journals$ISSN <- gsub("^(.{4})(.*)$", "\\1-\\2", journals$ISSN)
+count <- nrow(journals)
+
+urlArg <- 'https://v2.sherpa.ac.uk/cgi/retrieve?item-type=publication&api-key=%s&format=Json&filter=[["issn","equals","%s"]]'
+
+# * Preallocation * #
+
 journalPolicy <-
   tibble(
     issn = character(),
@@ -14,64 +20,48 @@ journalPolicy <-
   )
 
 df_JSON <-
-  tibble(
- publishers = character(),
-   issns =character(),
-   url = character(),
-   id = character(),
-   listed_in_doaj_phrases = character(),
-   type_phrases = character(),
-   type = character(),
-   system_metadata = character(),
-   listed_in_doaj = character(),
-   publisher_policy = character(),
-   title = character()
-)
+    tibble(
+        publishers = character(),
+        issns = character(),
+        url = character(),
+        id = character(),
+        listed_in_doaj_phrases = character(),
+        type_phrases = character(),
+        type = character(),
+        system_metadata = character(),
+        listed_in_doaj = character(),
+        publisher_policy = character(),
+        title = character()
+    )
 
 jList <- vector(mode = "list", length = 100)
 API <- vector(mode = "list", length = 100)
 API_P2 <- vector(mode = "list", length = 100)
 
-error_log <- NULL
-URLArg <-
-  'https://v2.sherpa.ac.uk/cgi/retrieve?item-type=publication&api-key=%s&format=Json&filter=[["issn","equals","%s"]]'
 
+# * Loop Preparation * #
 
-
-
-# Load JSON Conversion
-masterList <- na.omit(masterList)
-maxCount <- nrow(masterList)
-
-
-# Set up workers for loop
 cores <- detectCores()
 message(c(("\n* SETUP: computer cores used: "), cores, " *\n"))
 cl <- snow::makeCluster(cores)
 registerDoSNOW(cl)
 
-
-# Percentage bar for tracking progress
 pb <- txtProgressBar(
   min = 0,
-  max = maxCount,
+  max = count,
   style = 3
 )
 
 opts <- list(progress = (function(n) setTxtProgressBar(pb, n)))
 
-
-##############################
-# 2 - Analysis (1/5)         #
-##############################
-
-# Loop over API
+# ! Parse 1
 message("\n* PARSE 1 OF 5 * Loading ISSNs from API, this may take some time\n")
-API <- foreach(i = 1:maxCount, .options.snow = opts, .errorhandling = "pass") %dopar% {
-  journalArg <- masterList[i, ][5]
+
+API <- foreach(i = 1:count, .options.snow = opts, .errorhandling = "pass") %dopar% {
+  journalArg <- journals[i,][3]
   jsonURL <-
     sprintf(
-      URLArg,
+      urlArg,
       key,
       toString(journalArg)
     )
@@ -87,17 +77,11 @@ API <- foreach(i = 1:maxCount, .options.snow = opts, .errorhandling = "pass") %d
 close(pb)
 snow::stopCluster(cl)
 
-
-
-##############################
-# 2 - Analysis (2/5)         #
-##############################
-
+# ! Parse 2
 message("\n* PARSE 2 OF 5 *\n")
+count <- length(API)
 
-# Loop over imported data
-maxCount <- length(API)
-for (i in 1:maxCount)
+for (i in 1:count)
 {
   tryCatch(
     expr = {
@@ -127,13 +111,20 @@ for (i in 1:maxCount)
           select(title)
 
         # Obtain the policies from the JSON
-        c <- df_JSON %>%
-          dplyr::select(publisher_policy) %>%
-          unnest(cols = (publisher_policy)) %>%
-          select(permitted_oa) %>%
-          unnest(cols = (permitted_oa)) %>%
-          unnest(article_version) %>%
-          select(article_version)
+            c <- df_JSON %>%
+            dplyr::select(publisher_policy) %>%
+            unnest(cols = (publisher_policy))
+        if ("permitted_oa" %in% colnames(c)) {
+            c %<>%
+            select(permitted_oa) %>%
+                unnest(cols = (permitted_oa)) %>%
+                unnest(article_version) %>%
+                select(article_version)
+        } else {
+            # c %<>%
+            # dplyr::select(open_access_prohibited)
+            next
+        }
 
         # Merge the parts together
         d <- merge(a, b, all = TRUE)
@@ -148,7 +139,7 @@ for (i in 1:maxCount)
 
         # Output the unusued ISSNs for re-checking
       } else {
-        jList <- c(jList, as.character(API[[i]][1]))
+     
       }
     },
     error = function(e) {
@@ -159,54 +150,51 @@ for (i in 1:maxCount)
   )
 }
 
+
 ##############################
 # 2 - Analysis (3/5)         #
 ##############################
 
 message("\n* PARSE 3 OF 5 * Converting leftover ISSNs to Journal Titles\n")
 
-jList %<>%
-  enframe(name = NULL, value = "ISSN")
-
-
-# Remove dashes, SJR uses long string of number instead
-issn <- jList %>% pull(1)
+# Anti join the found journals from the original dataframe, which gives us
+# the left over journals
+foundJournals <- journalPolicy %>%
+    select(issn) %>%
+    rename(ISSN = issn) %>%
+    distinct()
+issn <- foundJournals %>% pull(1)
 issn <- gsub("-", "", issn)
-jList[1] <- issn
+foundJournals[1] <- issn
 
-a <- journalSJR %>%
-  separate(col = ISSN, into = c("issn", "issn2"), sep = ", ") %>%
-  pivot_longer(c("issn", "issn2"))
-colnames(a)[8] <- "ISSN"
-
-jList <- left_join(jList, a)
-jList <- as_tibble(jList$Title)
-jList <- unique(jList)
-
-
-# Loop over API v# Set up workers for loop
-
-maxCount <- nrow(jList)
-pb <- txtProgressBar(
-  min = 0,
-  max = maxCount,
-  style = 3
-)
-cl <- snow::makeCluster(cores)
-registerDoSNOW(cl)
-URLArg <-
-  'https://v2.sherpa.ac.uk/cgi/retrieve?item-type=publication&api-key=A4A2C39C-756A-11EA-84A4-BF0151E46997&format=Json&filter=[["title","equals","%s"]]'
+nextJournals <- anti_join(combinedCite, foundJournals) %>%
+    ungroup() %>%
+    select(Title) %>%
+    distinct()
 
 ##############################
 # 2 - Analysis (4/5)         #
 ##############################
 
 message("\n* PARSE 4 OF 5 * Loading ISSNs from API, this may take some time\n")
-API_P2 <- foreach(i = 1:maxCount, .options.snow = opts, .errorhandling = "pass") %dopar% {
-  journalArg <- jList[i, ]
+
+count <- nrow(nextJournals)
+pb <- txtProgressBar(
+  min = 0,
+  max = count,
+  style = 3
+)
+cl <- snow::makeCluster(cores)
+registerDoSNOW(cl)
+
+urlArg <- 'https://v2.sherpa.ac.uk/cgi/retrieve?item-type=publication&api-key=%s&format=Json&filter=[["title","equals","%s"]]'
+
+API_P2 <- foreach(i = 1:count, .options.snow = opts, .errorhandling = "pass") %dopar% {
+  journalArg <- nextJournals[i, ]
   jsonURL <-
     sprintf(
-      URLArg,
+      urlArg,
+      key,
       toString(journalArg)
     )
   jsonURL <- URLencode(jsonURL)
@@ -219,19 +207,19 @@ API_P2 <- foreach(i = 1:maxCount, .options.snow = opts, .errorhandling = "pass")
   }
 }
 
-
 close(pb)
 snow::stopCluster(cl)
+
 
 ##############################
 # 2 - Analysis (5/5)         #
 ##############################
 
-message("\n* PARSE 5 OF 5 * \n")
 
-# Loop over imported data
-maxCount <- length(API_P2)
-for (i in 1:maxCount)
+message("\n* PARSE 5 OF 5 * \n")
+count <- length(API_P2)
+
+for (i in 1:count)
 {
   tryCatch(
     expr = {
@@ -263,12 +251,18 @@ for (i in 1:maxCount)
 
         # Obtain the policies from the JSON
         c <- df_JSON %>%
-          dplyr::select(publisher_policy) %>%
-          unnest(cols = (publisher_policy)) %>%
-          select(permitted_oa) %>%
-          unnest(cols = (permitted_oa)) %>%
-          unnest(article_version) %>%
-          select(article_version)
+            dplyr::select(publisher_policy) %>%
+            unnest(cols = (publisher_policy))
+        if ("permitted_oa" %in% colnames(c)) {
+            c %<>%
+            select(permitted_oa) %>%
+                unnest(cols = (permitted_oa)) %>%
+                unnest(article_version) %>%
+                select(article_version)
+        } else {
+           
+            next
+        }
 
         # Merge the parts together
 
@@ -283,9 +277,9 @@ for (i in 1:maxCount)
             article_version = d$article_version
           )
 
-        # Output the unusued ISSNs for re-checking
+        
       } else {
-        jList <- c(jList, as.character(API_P2[[i]][1]))
+        
       }
     },
     error = function(e) {
@@ -302,18 +296,15 @@ for (i in 1:maxCount)
 
 # Tidy up journal policy by combining duplicates and spreading data
 journalPolicy %<>%
-  distinct() %>%
-  pivot_wider(id_cols = c(issn, title), values_from = article_version, names_from = article_version) %>%
-  mutate(submitted == "submitted", published == "published", accepted == "accepted") %>%
-  select(-submitted, -accepted, -published) %>%
-  mutate_all(list(~ ifelse(is.na(.), FALSE, .)))
-colnames(journalPolicy)[2] <- "Title"
+    distinct() %>%
+    pivot_wider(id_cols = c(issn, title), values_from = article_version, names_from = article_version) %>%
+    mutate(submitted == "submitted", published == "published", accepted == "accepted") %>%
+    select(-submitted, -accepted, -published) %>%
+    mutate_all(list(~ ifelse(is.na(.), FALSE, .))) %>%
+    rename(Title = title, Submitted = 'submitted == "submitted"', Published = 'published == "published"', Accepted = 'accepted == "accepted"', ISSN = issn)
+journalPolicy$ISSN <- gsub("-", "", journalPolicy$ISSN)
+
+return(journalPolicy)
 
 
-# Add leftover journals to journalPolicy (no policies found on Sherpa)
-jList %<>%
-  unlist() %>%
-  enframe(name = NULL)
-colnames(jList)[1] <- "Title"
-journalPolicy <- full_join(journalPolicy, jList)
 }

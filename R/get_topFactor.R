@@ -36,5 +36,19 @@ get_topFactor <- function() {
     issn <- gsub("[[:space:]]", "", issn)
     topFactor[2] <- issn
 
+topFactor %<>%
+    rename(
+        DataTransparency = `Data transparency score`,
+        AnalysisTransparency = `Analysis code transparency score`,
+        MaterialsTransparency = `Materials transparency score`,
+        DesignAnalysis = `Design & analysis reporting guidelines score`,
+        Preregistration = `Study preregistration score`,
+        Replication = `Replication score`,
+        AnalysisPreReg = `Analysis plan preregistration score`,
+        RegRepPubBias = `Registered reports & publication bias score`,
+        DataTransparency = `Data transparency score`,
+        DataCitation = `Data citation score`,
+        Badges = `Open science badges score`
+    )
     return(topFactor)
 }
