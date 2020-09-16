@@ -7,7 +7,6 @@ the_plan <-
 
     # Import data
     topFactor = get_topFactor(),
-    journalSJR = get_journalSJR(),
     openSci = get_openSci(),
     meta = get_metadata(),
     key = get_key(),
