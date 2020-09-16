@@ -17,7 +17,8 @@ The data files that are missing are:
   - This can be obtained from: https://v2.sherpa.ac.uk/romeo/
   - I use an API call  in fetch_sherpa to obtain the journals for analysis. An api key is needed for this to work (see get_key).
 - Journal ranking data
-  - This can be obtained from SciMago: https://www.scimagojr.com/
+  - This can be obtained from Scopus: https://www.scopus.com/sources
+  - Have to export the first sheet of the xlsb as 'CiteScore.csv', as R cannot parse xlsb files well.
 
 - Survey data
   - This cannot currently be obtained without permission. If uploaded, will be on the OSF.
