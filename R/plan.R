@@ -19,12 +19,13 @@ the_plan <-
 
     fetchPolicies = fetch_sherpa(combinedCite, key),
     save_sherpa = store_sherpa(fetchPolicies),
-    journalPolicies = get_sherpa(),
+    journalPolicies = get_sherpa(save_sherpa),
     combinedPolicies = combine_journals(combinedCite, journalPolicies),
 
     # Describe
     statsCareer = describe_career(barrierAnalysis),
     statsDiscipline = describe_discipline(barrierAnalysis),
+    statsFlow = describe_flow(topFactor, combinedCite, citeScore),
     
 
     # Graphs
@@ -35,6 +36,7 @@ the_plan <-
     openRidge = graph_openridge(combinedCite),
     citeRidge = graph_citeridge(combinedCite),
     journalBar = graph_journalbar(combinedCite),
+    flowGraph = graph_flow(statsFlow),
     
 
 

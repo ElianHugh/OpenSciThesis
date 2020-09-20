@@ -21,11 +21,11 @@ library(doSNOW)
 library(parallel)
 
 ## R Markdown ##
+library(DiagrammeR)
 library(rmarkdown)
 library(ggplot2)
 library(papaja)
 library(ggridges)
 library(ggpubr)
-library(diagram)
 library(knitr)
 library(kableExtra)

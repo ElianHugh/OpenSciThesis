@@ -522,8 +522,7 @@ df$OSS <- df %>%
 
 df %<>% mutate(
     ScoreGrade = quantcut(df$OSS, q = 5) 
-) %>%
-        dplyr::filter(Top10Perc == TRUE)
+)
 
 df %<>%
     group_by(GroupedDisc) %>%
