@@ -8,8 +8,6 @@
 ##' @export
 
 get_key <- function() {
-  
-  key <- read_file(file_in("data/api-key.txt"))
-
-  return(key)
+    key <- read_file(file_in("data/api-key.txt"))
+    return(key)
 }
