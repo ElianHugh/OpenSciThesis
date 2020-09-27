@@ -1,7 +1,26 @@
 graph_journalbar <- function(df) {
   graphdf <- df %>%
-    dplyr::filter(GroupedDisc != "Other") %>%
-    pivot_longer(cols=c(DataCitation, DataTransparency, AnalysisTransparency, MaterialsTransparency, DesignAnalysis, Preregistration, AnalysisPreReg, Replication, RegRepPubBias, Badges, Submitted, Published, Accepted), names_to = "Open Science Practice", values_to = "value") %>%
+    dplyr::filter(Top10Perc == TRUE) %>%
+    # dplyr::filter(GroupedDisc != "Other") %>%
+    pivot_longer(
+      cols = c(
+        DataCitation,
+        DataTransparency,
+        AnalysisTransparency,
+        MaterialsTransparency,
+        DesignAnalysis,
+        Preregistration,
+        AnalysisPreReg,
+        Replication,
+        RegRepPubBias,
+        Badges,
+        Submitted,
+        Published,
+        Accepted
+      ),
+      names_to = "Open Science Practice",
+      values_to = "value"
+    ) %>%
     ungroup() %>%
     group_by(`Open Science Practice`, GroupedDisc) %>%
     dplyr::filter(!is.na(value)) %>%
@@ -12,24 +31,54 @@ graph_journalbar <- function(df) {
       discN = paste0(GroupedDisc, ", n = ", n)
     ) %>%
     distinct()
-graphdf$`Open Science Practice` <- factor(graphdf$`Open Science Practice`, levels = c('DataCitation', 'DataTransparency', 'AnalysisTransparency', 'MaterialsTransparency', 'DesignAnalysis', 'Preregistration', 'AnalysisPreReg', 'Replication', 'RegRepPubBias', 'Badges', 'Submitted', 'Published', 'Accepted'))
 
-pal <- wes_palette("Darjeeling1")
-pal2 <- wes_palette("Darjeeling2")
+  graphdf$`Open Science Practice` <- factor(graphdf$`Open Science Practice`,
+    levels = c(
+      "DataCitation",
+      "DataTransparency",
+      "AnalysisTransparency",
+      "MaterialsTransparency",
+      "DesignAnalysis",
+      "Preregistration",
+      "AnalysisPreReg",
+      "Replication",
+      "RegRepPubBias",
+      "Badges",
+      "Submitted",
+      "Published",
+      "Accepted"
+    )
+  )
+
+  pal <- wes_palette("Darjeeling1")
+  pal2 <- wes_palette("Darjeeling2")
 
   graph <- graphdf %>%
     ggplot(aes(
       x = `Open Science Practice`,
       y = p.est, fill = discN
     )) +
-    geom_col() + 
+    geom_col() +
     facet_grid(. ~ discN, labeller = labeller(discN = label_wrap_gen(10))) +
     coord_flip() +
-    scale_y_continuous(limits = c(0, 1), breaks = c(0,.5, 1), labels = c(",","50%", "100%"), expand = c(0, 0)) +
+    scale_y_continuous(
+      limits = c(0, 1),
+      breaks = c(0, .5, 1),
+      labels = c(",", "50%", "100%"),
+      expand = c(0, 0)
+    ) +
     scale_x_discrete(expand = c(0, 0)) +
-    geom_errorbar(width = .5, aes(y = p.est, ymin = p.est - std.dev, ymax = p.est + std.dev)) +
-    ggtitle("Percentage of Open Science Practice Implementation for TOP Factor Journals") + theme_apa() + theme(legend.position = "none") + scale_fill_manual(values = c(pal,pal2)) + ylab("Percentage of journals that implement practice")
+    geom_errorbar(width = .5, aes(
+      y = p.est,
+      ymin = p.est - std.dev,
+      ymax = p.est + std.dev
+    )) +
+    ggtitle("Open Science Practice Implementation for TOP Factor Journals") +
+    theme_apa() +
+    theme(legend.position = "none") +
+    scale_fill_manual(values = c(pal, pal2)) +
+    ylab("Percentage of journals that implement practice")
 
-ggdraw(graph) + draw_label("Open Access", x = 0.05, y = 0.75, angle = 90)
-  
+  ggdraw(graph) +
+    draw_label("Open Access", x = 0.05, y = 0.75, angle = 90)
 }

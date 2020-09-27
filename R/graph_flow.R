@@ -4,17 +4,13 @@ topfacN <- statsFlow$topfacN
 citeN <- statsFlow$citeN
 differenceN <- statsFlow$differenceN
 combinedN <- statsFlow$combinedN
-
 filteredN <- statsFlow$filteredN
-
-library(diagram)
+finalN <- statsFlow$finalN
+sherpadiffN <- statsFlow$sherpadiffN
 
 par(mar = c(1,4,1,4))
-
 openplotmat()
 pos <- coordinates(c(1,3,3,3,3,3,3,3,3))
-# the dd parameter was used to move the segment arm
-#straightarrow(from = pos[1, ], to = pos[3, ])
 straightarrow(from = pos[2, ], to = pos[3, ], arr.pos=NULL)
 straightarrow(from = pos[4, ], to = pos[3, ], arr.pos=NULL)
 straightarrow(from = pos[3, ], to = pos[6, ], arr.pos=NULL)
@@ -42,9 +38,9 @@ for (i in 1:length(my_label)) {
       } else if (i == 15) {
              textrect(mid = pos[i, ], radx = my_edge_length, rady = my_edge_length/2, lab = paste0("Records after filter \n (n = ", filteredN, ")"), cex = my_text_size, box.col = "#FFFFFF")
       } else if (i==16){
-              textrect(mid = pos[i, ], radx = my_edge_length, rady = my_edge_length/2, lab = paste0("Records after something \n (n = ", combinedN, ")"), cex = my_text_size, box.col = "#FFFFFF")
+              textrect(mid = pos[i, ], radx = my_edge_length, rady = my_edge_length / 2, lab = paste0("Records without Sherpa matches \n (n = ", sherpadiffN, ")"), cex = my_text_size, box.col = "#FFFFFF")
       } else if (i==21){
-              textrect(mid = pos[i, ], radx = my_edge_length, rady = my_edge_length/2, lab = paste0("Final  \n (n = ", combinedN, ")"), cex = my_text_size, box.col = "#FFFFFF")
+              textrect(mid = pos[i, ], radx = my_edge_length, rady = my_edge_length/2, lab = paste0("Final  \n (n = ", finalN, ")"), cex = my_text_size, box.col = "#FFFFFF")
       }
        else {
             next

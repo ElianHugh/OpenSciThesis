@@ -19,7 +19,7 @@ library(gtools)
 # Data Viz
 library(ggplot2)
 library(cowplot)
-library(DiagrammeR)
+library(diagram)
 library(ggridges)
 library(ggpubr)
 library(wesanderson)

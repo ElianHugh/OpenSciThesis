@@ -55,7 +55,10 @@ df <- coalesce_join(df, df2, by = "Title")
 leftover <- df[is.na(df$Submitted), ]
 df <- anti_join(df, leftover, by = "Title")
 
-message("Final number of journals : ", nrow(df %>% ungroup() %>% distinct(Title)))
+message(
+  "Final number of journals : ",
+  nrow(df %>% ungroup() %>% distinct(Title))
+)
 
 return(df)
 
