@@ -25,7 +25,7 @@ the_plan <-
     # Describe
     statsCareer = describe_career(barrierAnalysis),
     statsDiscipline = describe_discipline(barrierAnalysis),
-    statsFlow = describe_flow(topFactor, combinedCite, citeScore),
+    statsFlow = describe_flow(topFactor, combinedCite, citeScore, combinedPolicies),
     
 
     # Graphs
@@ -33,9 +33,9 @@ the_plan <-
     careerGraph = graph_careers(barrierAnalysis),
     disciplineGraph = graph_disciplines(barrierAnalysis),
     
-    openRidge = graph_openridge(combinedCite),
-    citeRidge = graph_citeridge(combinedCite),
-    journalBar = graph_journalbar(combinedCite),
+    openRidge = graph_openridge(combinedPolicies),
+    citeRidge = graph_citeridge(combinedPolicies),
+    journalBar = graph_journalbar(combinedPolicies),
     flowGraph = graph_flow(statsFlow),
     
 
