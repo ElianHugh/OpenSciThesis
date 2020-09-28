@@ -50,32 +50,6 @@ graph_journalbar <- function(df) {
     )
   )
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-# Top10 Journals
-graphdf <- df %>%
-  # distinct(Title, .keep_all = TRUE) %>%
-  dplyr::filter(GroupedDisc != "Other") %>%
-    # dplyr::filter(n > 10) %>%
-    mutate(discN = paste0(GroupedDisc, ", n = ", n)) %>%
-    pivot_longer(DataCitation:Badges,
-    names_to = "Open Science Practice",
-    values_to = "value") %>%
-    ggplot(aes(x = `Open Science Practice`, y = value)) +
-      stat_summary(
-        fun.min = min,
-        fun.max = max,
-        fun = mean,
-        geom = "bar"
-      ) +
-      facet_wrap(~discN) +
-    coord_flip() +
-    ggtitle("Percentage of Open Science Practice Policies for Top 10% Ranked Journals") +
-    scale_y_continuous(labels = scales::percent)
-return(graphdf)
-=======
-=======
->>>>>>> e38eb6831e738e34df8c6c9efc6fc146e5854ab9
   pal <- wes_palette("Darjeeling1")
   pal2 <- wes_palette("Darjeeling2")
 
@@ -107,8 +81,4 @@ return(graphdf)
 
   ggdraw(graph) +
     draw_label("Open Access", x = 0.05, y = 0.75, angle = 90)
-<<<<<<< HEAD
->>>>>>> e38eb6831e738e34df8c6c9efc6fc146e5854ab9
-=======
->>>>>>> e38eb6831e738e34df8c6c9efc6fc146e5854ab9
 }

@@ -35,18 +35,8 @@ the_plan <-
     citeRidge = graph_citeridge(combinedPolicies),
     journalBar = graph_journalbar(combinedPolicies),
     flowGraph = graph_flow(statsFlow),
-<<<<<<< HEAD
-<<<<<<< HEAD
-    
-
-=======
 
     # Markdown
->>>>>>> e38eb6831e738e34df8c6c9efc6fc146e5854ab9
-=======
-
-    # Markdown
->>>>>>> e38eb6831e738e34df8c6c9efc6fc146e5854ab9
     Report = target(
       command = {
         rmarkdown::render(knitr_in("doc/EmpiricalReport.Rmd"))
