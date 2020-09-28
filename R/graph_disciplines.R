@@ -7,12 +7,13 @@
 ##' @author
 ##' @export
 
-graph_disciplines <- function(df) {
-  loadd(statsDiscipline)
-  loadd(meta)
+graph_disciplines <- function(df, statsDiscipline, meta) {
 
   total_n <- sum(statsDiscipline$n)
-  title <- sprintf("Perceived Barriers to Open Science by Discipline\n (n = %d)", total_n)
+  title <- sprintf(
+    "Perceived Barriers to Open Science by Discipline\n (n = %d)",
+    total_n
+  )
 
   graphDiscBarr <-
     ggplot(
@@ -29,6 +30,6 @@ graph_disciplines <- function(df) {
     ggtitle(title) +
     theme_apa(base_size = 11) +
     scale_y_continuous(expand = c(0, 0), limits = c(0, 100))
+  
   graphDiscBarr
-  return(graphDiscBarr)
 }

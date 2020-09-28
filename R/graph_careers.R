@@ -7,11 +7,7 @@
 ##' @author
 ##' @export
 
-graph_careers <- function(df) {
-  loadd(statsCareer)
-  loadd(barrierAnalysis)
-  loadd(openSci)
-
+graph_careers <- function(statsCareer, barrierAnalysis, openSci) {
   a <- openSci %>%
     select(ParticipantNumber, CareerLevel) %>%
     dplyr::filter(CareerLevel != "Unlisted") %>%
@@ -47,22 +43,55 @@ graph_careers <- function(df) {
   df.Plotting <- full_join(studentPlot, academicPlot) %>%
     mutate(Perc = if_else(CareerLevel == "Academic", -Perc, Perc))
   tempDf <- na.omit(df.Plotting) %>%
-    dplyr::filter(CareerLevel == "HDR Student") %>%
-    arrange(Perc)
+    dplyr::filter(CareerLevel == "Academic") %>%
+    arrange(desc(Perc))
   order <- tempDf$Barrier
 
   # Graph barriers by career level (grouped)
   # IMPORTANT to omit NAs, as otherwise will inflate responses
   total_n <- sum(statsCareer$n)
-  title <- sprintf("Perceived Barriers to Open Science by Career Level\n (n = %d)", total_n)
+  title <- sprintf(
+    "Perceived Barriers to Open Science by Career Level\n (n = %d)",
+    total_n
+  )
 
-  graphCBar <- ggplot(na.omit(df.Plotting), aes(y = Perc, x = Barrier, label = Barrier, fill = CareerLevel, colour = CareerLevel)) +
-    ggtitle(title) +
-    geom_segment(aes(x = Barrier, y = 0, xend = Barrier, yend = Perc), color = "grey50", size = 0.75) +
+  df.Plotting$Barrier <- fct_reorder(df.Plotting$Barrier,
+    df.Plotting$Perc,
+    .desc = FALSE
+  )
+
+  graphCBar <- ggplot(
+    na.omit(df.Plotting),
+    aes(
+      y = Perc,
+      x = Barrier,
+      label = round(Perc),
+      fill = CareerLevel,
+      colour = CareerLevel
+    )
+  ) +
+    geom_segment(aes(
+      x = Barrier,
+      y = 0,
+      xend = Barrier,
+      yend = Perc
+    ),
+    color = "grey50",
+    size = 0.75
+    ) +
     geom_point(size = 3) +
-    coord_flip() +
+    geom_hline(
+      yintercept = 0,
+      linetype = "dotted"
+    ) +
     scale_x_discrete(limits = order) +
-    ylim(-100, 100)
+    scale_y_continuous(
+      limits = c(-100, 100),
+      labels = c(100, 50, 0, 50, 100)
+    ) +
+    coord_flip() +
+    ggtitle(title) +
+    ylab("Percentage") +
+    theme_apa()
   graphCBar
-  return(graphCBar)
 }

@@ -16,16 +16,20 @@ library(forcats)
 library(fuzzyjoin)
 library(gtools)
 
+# Data Viz
+library(ggplot2)
+library(cowplot)
+library(diagram)
+library(ggridges)
+library(ggpubr)
+library(wesanderson)
+
 ## Parallel Processing ##
 library(doSNOW)
 library(parallel)
 
 ## R Markdown ##
-library(DiagrammeR)
 library(rmarkdown)
-library(ggplot2)
 library(papaja)
-library(ggridges)
-library(ggpubr)
 library(knitr)
 library(kableExtra)
