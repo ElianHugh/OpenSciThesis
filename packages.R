@@ -6,13 +6,9 @@ library(drake)
 
 ## Data Analysis ##
 library(withr)
-library(readr)
 library(readxl)
 library(magrittr)
 library(tidyverse)
-library(tidyr)
-library(psych)
-library(forcats)
 library(fuzzyjoin)
 library(gtools)
 library(rlist)
@@ -22,7 +18,6 @@ library(ggplot2)
 library(cowplot)
 library(diagram)
 library(ggridges)
-library(ggpubr)
 library(wesanderson)
 
 ## Parallel Processing ##

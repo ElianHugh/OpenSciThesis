@@ -458,7 +458,9 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Geography, Planning and Development" ~ "Social Sciences",
             SubjectArea == "Health (social science)" ~ "Social Sciences",
             SubjectArea == "Human Factors and Ergonomics" ~ "Social Sciences",
-            SubjectArea == "Law" ~ "Social Sciences",
+
+            # ! originally was Law -> Social
+            SubjectArea == "Law" ~ "Law",
             SubjectArea == "Library and Information Sciences" ~ "Social Sciences",
             SubjectArea == "Life-span and Life-course Studies" ~ "Social Sciences",
             SubjectArea == "Linguistics and Language" ~ "Social Sciences",
@@ -508,6 +510,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             Discipline == "Social Sciences" ~ "ASSH",
             # Business & Law
             Discipline == "Business, Management and Accounting" ~ "Business",
+            Discipline == "Law" ~ "Law",
 
             # Psych & Cog Sciences
             Discipline == "Psychology" ~ "Psych. & Cog. Sciences",

@@ -8,7 +8,6 @@
 #' @export
 
 analyse_survey <- function(df) {
-  loadd(meta)
 
   # Convert barriers to long
   df %<>%
