@@ -1,5 +1,7 @@
 fetch_sherpa <- function(combinedCite, key){
 
+# * TODO Distinguish between types of OA better, e.g. OA fees vs none
+
 ##############################
 #  Helper Functions          #
 ##############################
@@ -59,127 +61,74 @@ fetch_json <- function(opts, count, pb, nextJournals, key, is_issn = FALSE, is_p
     temp
 }
 
-### New Function
+explore_json <- function(API) {
+    x <- API %>%
+        flatten() %>%
+        list.filter(!is.null(title)) %>%
+        list.select(
+            Titles = flatten(title),
+            ISSNS = flatten(issns),
+            PublisherPolicy = flatten(publisher_policy)
+        ) %>%
+        list.filter(!(is.null(PublisherPolicy$permitted_oa))) %>%
+        list.select(
+            Title = Titles$title,
+            ISSN = ISSNS$issn,
+            PermittedOA = flatten(PublisherPolicy$permitted_oa)
+        ) %>%
+        list.select(Title,
+            ISSN,
+            Submitted = "submitted" %in% PermittedOA$article_version,
+            Accepted = "accepted" %in% PermittedOA$article_version,
+            Published = "published" %in% PermittedOA$article_version
+        ) %>%
+        list.rbind() %>%
+        as_tibble()
 
-# Function A: handle all normal cases
-test <- API %>%
-    flatten() %>%
-    list.select(Titles = flatten(title), 
-                ISSNS = flatten(issns), 
-                PublisherPolicy = flatten(publisher_policy)) %>%
-    list.select(Title = Titles$title, 
-                ISSN = ISSNS$issn, 
-                PermittedOA = flatten(PublisherPolicy$permitted_oa)) %>%
-    list.select(Title, 
-                ISSN, 
-                Submitted = "submitted" %in% PermittedOA$article_version, 
-                Accepted = "accepted" %in% PermittedOA$article_version, 
-                Published = "published" %in% PermittedOA$article_version) %>%
-    list.rbind()
+    y <- API %>%
+        flatten() %>%
+        list.filter(!is.null(title)) %>%
+        list.select(
+            Titles = flatten(title),
+            ISSNS = flatten(issns),
+            PublisherPolicy = flatten(publisher_policy)
+        ) %>%
+        list.filter((is.null(PublisherPolicy$permitted_oa))) %>%
+        list.select(
+            Title = Titles$title,
+            ISSN = ISSNS$issn,
+            Submitted = FALSE,
+            Accepted = FALSE,
+            Published = FALSE
+        ) %>%
+        list.rbind() %>%
+        as_tibble()
 
-# Fuction B: handle the other cases
-
-
-###
-
-head
-explore_json <- function(API, opts, count, pb, is_issn = FALSE, debug = FALSE) {
-    if (debug == TRUE) {
-        cat("\nCount is ", count)
-        cat("\nISSN boolean is ", is_issn)
+    if (nrow(x) > 0 && nrow(y) > 0) {
+        z <- full_join(x, y) %>%
+            unnest_longer(Title) %>%
+            unnest_longer(ISSN) %>%
+            unnest_longer(Submitted) %>%
+            unnest_longer(Accepted) %>%
+            unnest_longer(Published)
+    } else if (!nrow(x) > 0) {
+        z <- y %>%
+            unnest_longer(Title) %>%
+            unnest_longer(ISSN) %>%
+            unnest_longer(Submitted) %>%
+            unnest_longer(Accepted) %>%
+            unnest_longer(Published)
+    } else {
+        z <- x %>%
+            unnest_longer(Title) %>%
+            unnest_longer(ISSN) %>%
+            unnest_longer(Submitted) %>%
+            unnest_longer(Accepted) %>%
+            unnest_longer(Published)
     }
-
-
-    temp <- foreach(i = 1:count, .options.snow = opts, .errorhandling = "remove", .packages = "tidyverse") %dopar% {
-        # Progress bar
-        flush.console()
-        setTxtProgressBar(pb, i)
-        # We flatten, and then convert the JSON into a tibble for easier manipulation
-        if (is.list(API[[i]])) {
-            df_JSON <- API[[i]] %>%
-                purrr::flatten() %>%
-                purrr::map_if(is.data.frame, list) %>%
-                tibble::as_tibble(.name_repair = "minimal")
-        }
-        # Makes sure that journals not listed in SHERPA/Romeo are not iterated over
-        if (is_issn == TRUE) {
-            if (!(is_tibble(API[[i]][1]))) {
-                # Obtain the ISSNs from the JSON
-                a <- df_JSON %>%
-                    select(issns) %>%
-                    unnest(cols = (issns)) %>%
-                    select(issn)
-
-                # Obtain the title from the JSON
-                b <- df_JSON %>%
-                    select(title) %>%
-                    unnest(cols = (title)) %>%
-                    select(title)
-
-                # Obtain the policies from the JSON
-                c <- df_JSON %>%
-                    dplyr::select(publisher_policy) %>%
-                    unnest(cols = (publisher_policy))
-                if ("permitted_oa" %in% colnames(c)) {
-                    c %<>%
-                        select(permitted_oa) %>%
-                        unnest(cols = (permitted_oa)) %>%
-                        unnest(article_version) %>%
-                        select(article_version)
-                } else {
-                    # c %<>%
-                    # dplyr::select(open_access_prohibited)
-                }
-
-                # Merge the parts together
-                d <- merge(a, b, all = TRUE)
-                d <- merge(d, c, all = TRUE)
-                d
-
-                # Output the unusued ISSNs for re-checking
-            } else {
-
-            }
-        } else {
-            if (!(is_tibble(API[[i]][1])) && !(is_character(API[[i]][1]))) {
-                # Obtain the ISSNs from the JSON
-                a <- df_JSON %>%
-                    select(issns) %>%
-                    unnest(cols = (issns)) %>%
-                    select(issn)
-
-                # Obtain the title from the JSON
-                b <- df_JSON %>%
-                    select(title) %>%
-                    unnest(cols = (title)) %>%
-                    select(title)
-
-                # Obtain the policies from the JSON
-                c <- df_JSON %>%
-                    dplyr::select(publisher_policy) %>%
-                    unnest(cols = (publisher_policy))
-                if ("permitted_oa" %in% colnames(c)) {
-                    c %<>%
-                        select(permitted_oa) %>%
-                        unnest(cols = (permitted_oa)) %>%
-                        unnest(article_version) %>%
-                        select(article_version)
-                } else {
-
-                }
-
-                # Merge the parts together
-
-                d <- merge(a, b, all = TRUE)
-                d <- merge(d, c, all = TRUE)
-                d
-            } else {
-
-            }
-        }
-    }
-    temp
+    return(z)
 }
+
 
 ##############################
 #  Data Setup                #
@@ -189,7 +138,7 @@ journals <- combinedCite %>%
     ungroup()
 journals$ISSN <- gsub("[[:space:]]", "", journals$ISSN)
 journals$ISSN <- gsub("^(.{4})(.*)$", "\\1-\\2", journals$ISSN)
-count <- nrow(journals)
+
 
 nextJournals <- journals %>%
     select(Title) %>%
@@ -208,55 +157,38 @@ opts <- list(progress = (function(n) setTxtProgressBar(pb, n)))
 message("\n* PARSE 1 OF 5 * Finding journals by title\n")
 
 # * Initiate API fetching
+count <- nrow(journals)
 pb <- new_bar(count)
 cl <- snow::makeCluster(cores, type = "SOCK")
 registerDoSNOW(cl)
 API <- fetch_json(opts, count, pb, nextJournals, key)
 close(pb)
 
-if (count > 0) {
-
-# * Initiate API exploration
-count <- length(API)
-pb <- new_bar(count)
-jp <- explore_json(API, opts, count, pb)
-close(pb)
-
-
-# * Map the list to a dataframe
-parse1 <- map_dfr(jp, as.data.frame) %>%
-    select(
-        issn,
-        title,
-        article_version,
-        open_access_prohibited_phrases
-    )
-parse1$title <- str_replace(parse1$title, "&", "and")
+if (length(API) > 0) {
+    parse1 <- explore_json(API)
 } else {
     message("\nDid not find any journals at parse 1.")
 }
-
-
 
 ##############################
 #  Prep                      #
 ##############################
 
-if (count > 0) {
+if (exists("parse1")) {
+    foundJournals <- parse1 %>%
+        distinct()
 
-foundJournals <- parse1 %>%
-    select(title) %>%
-    rename(Title = title) %>%
-    distinct()
+    leftoverJournals <- anti_join(combinedCite,
+        foundJournals,
+        by = "Title"
+    )
 
-leftoverJournals <- anti_join(combinedCite, foundJournals, by = "Title")
+    nextJournals <- leftoverJournals %>%
+        ungroup() %>%
+        select(MatchTitle) %>%
+        distinct()
 
-nextJournals <- leftoverJournals %>%
-    ungroup() %>%
-    select(MatchTitle) %>%
-    distinct()
-
-cat("\nJournals left : ", as.character((nrow(nextJournals))))
+    cat("\nJournals left : ", as.character((nrow(nextJournals))))
 }
 
 ##############################
@@ -268,55 +200,40 @@ message("\n* PARSE 2 OF 5 * Finding journals by matchtitle\n")
 # * Initiate API fetching
 count <- nrow(nextJournals)
 pb <- new_bar(count)
-
 registerDoSNOW(cl)
 API <- fetch_json(opts, count, pb, nextJournals, key)
 close(pb)
 
-if (count > 0) {
-
-# * Initiate API exploration
-count <- length(API)
-pb <- new_bar(count)
-jp <- explore_json(API, opts, count, pb)
-close(pb)
-
-# * Map the list to a dataframe
-parse2 <- map_dfr(jp, as.data.frame) %>%
-    select(
-        issn,
-        title,
-        article_version,
-    )
-parse2$title <- str_replace(parse2$title, " & ", " and ")
+if (length(API) > 0) {
+    parse2 <- explore_json(API)
 } else {
-    message("\n Did not find any journals during parse 2.")
+    message("\nDid not find any journals at parse 2.")
 }
 
 ##############################
 #  Prep                      #
 ##############################
 
-if (count > 0) {
+if (exists("parse2")) {
+    foundJournals <- parse2 %>%
+        select(Title) %>%
+        rename(MatchTitle = Title) %>%
+        distinct()
 
-foundJournals <- parse2 %>%
-    select(title) %>%
-    rename(MatchTitle = title) %>%
-    distinct()
+    leftoverJournals <- anti_join(leftoverJournals,
+        foundJournals,
+        by = "MatchTitle"
+    )
 
-leftoverJournals <- anti_join(leftoverJournals, foundJournals, by = "MatchTitle")
+    nextJournals <- leftoverJournals %>%
+        ungroup() %>%
+        select(ISSN) %>%
+        distinct()
 
-nextJournals <- leftoverJournals %>%
-    ungroup() %>%
-    select(ISSN) %>%
-    distinct()
-
-nextJournals$ISSN <- gsub("[[:space:]]", "", nextJournals$ISSN)
-nextJournals$ISSN <- gsub("^(.{4})(.*)$", "\\1-\\2", nextJournals$ISSN)
-
-cat("\nISSNs left : ", as.character((nrow(nextJournals))))
+    nextJournals$ISSN <- gsub("[[:space:]]", "", nextJournals$ISSN)
+    nextJournals$ISSN <- gsub("^(.{4})(.*)$", "\\1-\\2", nextJournals$ISSN)
+    cat("\nISSNs left : ", as.character((nrow(nextJournals))))
 }
-
 
 ##############################
 #  Parse 3                   #
@@ -327,54 +244,33 @@ message("\n* PARSE 3 OF 5 * Finding journals by ISSN\n")
 # * Initiate API fetching
 count <- nrow(nextJournals)
 pb <- new_bar(count)
-
 registerDoSNOW(cl)
 API <- fetch_json(opts, count, pb, nextJournals, key, is_issn = TRUE)
 close(pb)
 
-if (count > 0) {
-# * Initiate API exploration
-count <- length(API)
-pb <- new_bar(count)
-jp <- explore_json(API, opts, count, pb, is_issn = TRUE)
-close(pb)
-
-# * Map the list to a dataframe
-parse3 <- map_dfr(jp, as.data.frame) %>%
-    select(
-        issn,
-        title,
-        article_version,
-    )
-parse3$title <- str_replace(parse3$title, " & ", " and ")
-
+if (length(API) > 0) {
+    parse3 <- explore_json(API)
 } else {
-    message("\n Did not find any journals during parse 3.")
+    message("\nDid not find any journals at parse 3.")
 }
 
 ##############################
 #  Prep                      #
 ##############################
 
-if (count > 0) {
+if (exists("parse3")) {
+    foundJournals <- parse3 %>%
+        distinct()
 
-foundJournals <- parse3 %>%
-    select(title) %>%
-    rename(Title = title) %>%
-    distinct()
+    leftoverJournals <- anti_join(leftoverJournals, foundJournals, by = "Title")
 
-leftoverJournals <- anti_join(leftoverJournals, foundJournals, by = "Title")
-
-nextJournals <- leftoverJournals %>%
-    ungroup() %>%
-    select(Title) %>%
-    distinct()
+    nextJournals <- leftoverJournals %>%
+        ungroup() %>%
+        select(Title) %>%
+        distinct()
 }
 
-# * Replace "AND" with "&" to see if that will bring more results
-
 nextJournals$Title <- str_replace(nextJournals$Title, " and ", " & ")
-
 
 ##############################
 #  Parse 4                   #
@@ -385,63 +281,52 @@ message("\n* PARSE 4 OF 5 * Finding journals by modified title\n")
 # * Initiate API fetching
 count <- nrow(nextJournals)
 pb <- new_bar(count)
-
 registerDoSNOW(cl)
 API <- fetch_json(opts, count, pb, nextJournals, key)
 close(pb)
 count <- length(API)
 
-if (count > 0) {
-
-    # * Initiate API exploration
-    pb <- new_bar(count)
-    jp <- explore_json(API, opts, count, pb)
-    close(pb)
-
-    # * Map the list to a dataframe
-    parse4 <- map_dfr(jp, as.data.frame) %>%
-        select(
-            issn,
-            title,
-            article_version,
-            open_access_prohibited_phrases
-        )
-    parse4$title <- str_replace(parse4$title, " & ", " and ")
+if (length(API) > 0) {
+    parse4 <- explore_json(API)
 } else {
-    message("\nDid not find any more journals via modified title.")
-}
-
-# TODO
-# ! Handle if this comes back positive
-
-if (count > 0) {
-
+    message("\nDid not find any journals at parse 4.")
 }
 
 ##############################
 #  Prep                      #
 ##############################
 
+if (exists("parse4")) {
+    foundJournals <- parse4 %>%
+        distinct()
 
+    leftoverJournals <- anti_join(combinedCite,
+        foundJournals,
+        by = "Title"
+    )
 
-# ! Here we will get a list of publications from the relevant publishers
+    nextJournals <- leftoverJournals %>%
+        ungroup() %>%
+        select(MatchTitle) %>%
+        distinct()
+
+    cat("\nJournals left : ", as.character((nrow(nextJournals))))
+}
+
 nextPublishers <- leftoverJournals %>%
     ungroup() %>%
     select(Publisher) %>%
     distinct()
 
-
 ##############################
 #  Parse 5                   #
 ##############################
-
 
 message("\n* PARSE 5 OF 6 * Finding journals through publisher matching \n")
 
 # * Initiate API fetching
 count <- nrow(nextPublishers)
 pb <- new_bar(count)
-
 registerDoSNOW(cl)
 API <- fetch_json(opts, count, pb, nextPublishers, key, is_publisher = TRUE)
 close(pb)
@@ -449,19 +334,20 @@ count <- length(API)
 
 # * Prep for explore
 if (count > 0) {
-explore_publisher <- function(API, i) {
-    temp <- purrr::flatten(API)
-    if ("publications" %in% names(temp)) {
-        temp %>%
-            tibble::as_tibble(.name_repair = "minimal") %>%
-            select(publications) %>%
-            unnest(cols = (publications)) %>%
-            select(title) %>%
-            unnest(cols = (title)) %>%
-            select(title)
-    }
-    else {
-        temp <- NULL
+    explore_publisher <- function(API, i) {
+        temp <- purrr::flatten(API)
+        if ("publications" %in% names(temp)) {
+            temp %>%
+                tibble::as_tibble(.name_repair = "minimal") %>%
+                select(publications) %>%
+                unnest(cols = (publications)) %>%
+                select(title) %>%
+                unnest(cols = (title)) %>%
+                select(title)
+        }
+        else {
+            temp <- NULL
+        }
     }
 }
 
@@ -473,27 +359,12 @@ tempdf <- as.data.frame(pl) %>%
     rename(Title = pl)
 tempdf <- anti_join(tempdf, combinedCite)
 
-if (exists("parse1")) {
-    parse1 %<>%
-        rename(Title = title)
 
-    tempdf <- anti_join(tempdf, parse1, by = "Title")
-}
-if (exists("parse2")) {
-    parse2 %<>%
-        rename(Title = title)
-    tempdf <- anti_join(tempdf, parse2, by = "Title")
-}
-if (exists("parse3")) {
-    parse3 %<>%
-        rename(Title = title)
-    tempdf <- anti_join(tempdf, parse3, by = "Title")
-}
-if (exists("parse4")) {
-    parse4 %<>%
-        rename(ISSN = issn)
-    tempdf <- anti_join(tempdf, parse4, by = "ISSN")
-}
+if (exists("parse1")) tempdf <- anti_join(tempdf, parse1, by = "Title")
+if (exists("parse2")) tempdf <- anti_join(tempdf, parse2, by = "Title")
+if (exists("parse3")) tempdf <- anti_join(tempdf, parse3, by = "Title")
+if (exists("parse4")) tempdf <- anti_join(tempdf, parse4, by = "ISSN")
+
 
 # ! Look for matches of title
 
@@ -510,12 +381,14 @@ matchJournals %<>%
     tidyr::gather(key = "key", value = "value", -id) %>%
     dplyr::filter(value == TRUE)
 
+
 # ! There is definitely a better way to do this but...
 matchJournals$id <- str_replace_all(matchJournals$id, "[^[:alnum:]]", " ")
 matchJournals$id <- trimws(matchJournals$id, which = "both")
 matchJournals$key <- str_replace_all(matchJournals$key, "[^[:alnum:]]", " ")
 matchJournals$key <- str_replace_all(matchJournals$key, "[0-9]+", " ")
 matchJournals$key <- trimws(matchJournals$key, which = "both")
+
 
 matchJournals %<>%
     distinct()
@@ -525,70 +398,40 @@ cat("\nJournals matched: ", nrow(matchJournals))
 nextJournals <- matchJournals %>%
     select(id)
 
-}
-
 ##############################
 # Parse 6                    #
 ##############################
 
 message("\n* PARSE 6 OF 6 * Matching journals \n")
+
 # * Initiate API fetching
 count <- nrow(nextJournals)
 pb <- new_bar(count)
-
 registerDoSNOW(cl)
 API <- fetch_json(opts, count, pb, nextJournals, key)
 close(pb)
 
-if (count > 0) {
-
-# * Initiate API exploration
-count <- length(API)
-pb <- new_bar(count)
-jp <- explore_json(API, opts, count, pb)
-close(pb)
-
-# * Map the list to a dataframe
-parse6 <- map_dfr(jp, as.data.frame) %>%
-    select(
-        issn,
-        title,
-        article_version,
-    ) %>%
-    rename(Title = title)
-
-matchJournals %<>%
-    rename(Title = id) %>%
-    left_join(parse6) %>%
-    select(-Title) %>%
-    rename(Title = key) %>%
-    distinct()
+if (length(API) > 0) {
+    parse6 <- explore_json(API)
 }
 
 ##############################
 # Synthesis                  #
 ##############################
 
-combinedPolicies <- parse1 
-    if (exists("parse2")) {
-        combinedPolicies <- add_case(combinedPolicies, parse2)
-    }
-      if (exists("parse3")) {
-          combinedPolicies <- add_case(combinedPolicies, parse3)
-      }
-        if (exists("parse4")) {
-            combinedPolicies <- add_case(combinedPolicies, parse4)
-        }
-          if (exists("parse6")) {
-        combinedPolicies <- add_case(combinedPolicies, parse6)
-    }
-combinedPolicies %<>%
-    distinct() %>%
-    pivot_wider(id_cols = c(issn, Title), values_from = article_version, names_from = article_version) %>%
-    mutate(submitted == "submitted", published == "published", accepted == "accepted") %>%
-    select(-submitted, -accepted, -published) %>%
-    mutate_all(list(~ ifelse(is.na(.), FALSE, .))) %>%
-    rename(Submitted = 'submitted == "submitted"', Published = 'published == "published"', Accepted = 'accepted == "accepted"', ISSN = issn)
+combinedPolicies <- parse1
+if (exists("parse2")) {
+    combinedPolicies <- add_case(combinedPolicies, parse2)
+}
+if (exists("parse3")) {
+    combinedPolicies <- add_case(combinedPolicies, parse3)
+}
+if (exists("parse4")) {
+    combinedPolicies <- add_case(combinedPolicies, parse4)
+}
+if (exists("parse6")) {
+    combinedPolicies <- add_case(combinedPolicies, parse6)
+}
 
 combinedPolicies$ISSN <- gsub("-", "", combinedPolicies$ISSN)
 
@@ -598,8 +441,6 @@ combinedPolicies$ISSN <- gsub("-", "", combinedPolicies$ISSN)
 
 snow::stopCluster(cl)
 registerDoSEQ()
-
-
 
 return(combinedPolicies)
 

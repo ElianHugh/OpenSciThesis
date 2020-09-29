@@ -1,7 +1,7 @@
 graph_journalbar <- function(df) {
   graphdf <- df %>%
     dplyr::filter(Top10Perc == TRUE) %>%
-    # dplyr::filter(GroupedDisc != "Other") %>%
+    dplyr::filter(GroupedDisc != "Other") %>%
     pivot_longer(
       cols = c(
         DataCitation,
@@ -15,8 +15,8 @@ graph_journalbar <- function(df) {
         RegRepPubBias,
         Badges,
         Submitted,
-        Published,
-        Accepted
+        Accepted,
+        Published
       ),
       names_to = "Open Science Practice",
       values_to = "value"
@@ -45,8 +45,8 @@ graph_journalbar <- function(df) {
       "RegRepPubBias",
       "Badges",
       "Submitted",
-      "Published",
-      "Accepted"
+      "Accepted",
+      "Published"
     )
   )
 
