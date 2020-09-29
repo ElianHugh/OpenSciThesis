@@ -59,6 +59,30 @@ fetch_json <- function(opts, count, pb, nextJournals, key, is_issn = FALSE, is_p
     temp
 }
 
+### New Function
+
+# Function A: handle all normal cases
+test <- API %>%
+    flatten() %>%
+    list.select(Titles = flatten(title), 
+                ISSNS = flatten(issns), 
+                PublisherPolicy = flatten(publisher_policy)) %>%
+    list.select(Title = Titles$title, 
+                ISSN = ISSNS$issn, 
+                PermittedOA = flatten(PublisherPolicy$permitted_oa)) %>%
+    list.select(Title, 
+                ISSN, 
+                Submitted = "submitted" %in% PermittedOA$article_version, 
+                Accepted = "accepted" %in% PermittedOA$article_version, 
+                Published = "published" %in% PermittedOA$article_version) %>%
+    list.rbind()
+
+# Fuction B: handle the other cases
+
+
+###
+
+head
 explore_json <- function(API, opts, count, pb, is_issn = FALSE, debug = FALSE) {
     if (debug == TRUE) {
         cat("\nCount is ", count)
