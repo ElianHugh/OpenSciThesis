@@ -11,9 +11,11 @@ graph_disciplines <- function(df, statsDiscipline, meta) {
 
   total_n <- sum(statsDiscipline$n)
   title <- sprintf(
-    "Perceived Barriers to Open Science by Discipline\n (n = %d)",
+    "Perceived Institutional Barriers to Open Science by Discipline\n (n = %d)",
     total_n
   )
+
+  # * TODO add early career vs late career to graph
 
   graphDiscBarr <-
     ggplot(

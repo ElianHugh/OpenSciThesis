@@ -60,6 +60,8 @@ graph_careers <- function(statsCareer, barrierAnalysis, openSci) {
     .desc = FALSE
   )
 
+  pal <- wes_palette("Darjeeling1")
+
   graphCBar <- ggplot(
     na.omit(df.Plotting),
     aes(
@@ -92,6 +94,7 @@ graph_careers <- function(statsCareer, barrierAnalysis, openSci) {
     coord_flip() +
     ggtitle(title) +
     ylab("Percentage") +
-    theme_apa()
+    theme_apa() +
+    scale_colour_manual(values = pal) 
   graphCBar
 }

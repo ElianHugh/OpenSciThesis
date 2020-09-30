@@ -15,6 +15,11 @@ analyse_citescore <- function(topFactor, citeScore) {
     )
 
     df <- left_join(topFactor, citeScore)
+
+    # Retry
+    df <- topFactor %>%
+        coalesce_join(df, by = "ISSN")
+
     # Take out the garbage
     message("Retry 1")
     x <- df[is.na(df$`Scopus Sub-Subject Area`), ] %>%

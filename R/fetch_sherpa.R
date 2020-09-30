@@ -416,6 +416,10 @@ fetch_sherpa <- function(combinedCite, key) {
         parse6 <- explore_json(API)
     }
 
+    # * TODO Find policy via the publisher and not the journal
+    # * I.e. the last resort, use publisher policies as journal policies
+
+
     ##############################
     # Synthesis                  #
     ##############################
