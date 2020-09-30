@@ -134,6 +134,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Insect Science" ~ "Agricultural and Biological Sciences",
             SubjectArea == "Plant Science" ~ "Agricultural and Biological Sciences",
             SubjectArea == "Soil Science" ~ "Agricultural and Biological Sciences",
+
             SubjectArea == "Arts and Humanities" ~ "Arts and Humanities",
             SubjectArea == "Archeology (arts and humanities)" ~ "Arts and Humanities",
             SubjectArea == "Arts and Humanities (miscellaneous)" ~ "Arts and Humanities",
@@ -149,6 +150,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Philosophy" ~ "Arts and Humanities",
             SubjectArea == "Religious Studies" ~ "Arts and Humanities",
             SubjectArea == "Visual Arts and Performing Arts" ~ "Arts and Humanities",
+
             SubjectArea == "Biochemistry, Genetics and Molecular Biology" ~ "Biochemistry, Genetics and Molecular Biology",
             SubjectArea == "Aging" ~ "Biochemistry, Genetics and Molecular Biology",
             SubjectArea == "Biochemistry" ~ "Biochemistry, Genetics and Molecular Biology",
@@ -166,6 +168,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Molecular Medicine" ~ "Biochemistry, Genetics and Molecular Biology",
             SubjectArea == "Physiology" ~ "Biochemistry, Genetics and Molecular Biology",
             SubjectArea == "Structural Biology" ~ "Biochemistry, Genetics and Molecular Biology",
+
             SubjectArea == "Business, Management and Accounting" ~ "Business, Management and Accounting",
             SubjectArea == "Accounting" ~ "Business, Management and Accounting",
             SubjectArea == "Business and International Management" ~ "Business, Management and Accounting",
@@ -178,6 +181,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Organizational Behavior and Human Resource Management" ~ "Business, Management and Accounting",
             SubjectArea == "Strategy and Management" ~ "Business, Management and Accounting",
             SubjectArea == "Tourism, Leisure and Hospitality Management" ~ "Business, Management and Accounting",
+
             SubjectArea == "Chemical Engineering" ~ "Chemical Engineering",
             SubjectArea == "Bioengineering" ~ "Chemical Engineering",
             SubjectArea == "Catalysis" ~ "Chemical Engineering",
@@ -188,6 +192,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Fluid Flow and Transfer Processes" ~ "Chemical Engineering",
             SubjectArea == "General Chemical Engineering" ~ "Chemical Engineering",
             SubjectArea == "Process Chemistry and Technology" ~ "Chemical Engineering",
+
             SubjectArea == "Chemistry" ~ "Chemistry",
             SubjectArea == "Analytical Chemistry" ~ "Chemistry",
             SubjectArea == "Chemistry (miscellaneous)" ~ "Chemistry",
@@ -197,6 +202,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Organic Chemistry" ~ "Chemistry",
             SubjectArea == "Physical and Theoretical Chemistry" ~ "Chemistry",
             SubjectArea == "Spectroscopy" ~ "Chemistry",
+
             SubjectArea == "Computer Science" ~ "Computer Science",
             SubjectArea == "Artificial Intelligence" ~ "Computer Science",
             SubjectArea == "Computational Theory and Mathematics" ~ "Computer Science",
@@ -211,12 +217,15 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Information Systems" ~ "Computer Science",
             SubjectArea == "Signal Processing" ~ "Computer Science",
             SubjectArea == "Software" ~ "Computer Science",
+
+            # * TODO examine here
             SubjectArea == "Decision Sciences" ~ "Decision Sciences",
             SubjectArea == "Decision Sciences (miscellaneous)" ~ "Decision Sciences",
             SubjectArea == "General Decision Sciences" ~ "Decision Sciences",
             SubjectArea == "Information Systems and Management" ~ "Decision Sciences",
             SubjectArea == "Management Science and Operations Research" ~ "Decision Sciences",
             SubjectArea == "Statistics, Probability and Uncertainty" ~ "Decision Sciences",
+
             SubjectArea == "Dentistry" ~ "Dentistry",
             SubjectArea == "Dental Assisting" ~ "Dentistry",
             SubjectArea == "Dental Hygiene" ~ "Dentistry",
@@ -225,6 +234,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Oral Surgery" ~ "Dentistry",
             SubjectArea == "Orthodontics" ~ "Dentistry",
             SubjectArea == "Periodontics" ~ "Dentistry",
+
             SubjectArea == "Earth and Planetary Sciences" ~ "Earth and Planetary Sciences",
             SubjectArea == "Atmospheric Science" ~ "Earth and Planetary Sciences",
             SubjectArea == "Computers in Earth Sciences" ~ "Earth and Planetary Sciences",
@@ -240,18 +250,23 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Paleontology" ~ "Earth and Planetary Sciences",
             SubjectArea == "Space and Planetary Science" ~ "Earth and Planetary Sciences",
             SubjectArea == "Stratigraphy" ~ "Earth and Planetary Sciences",
+
             SubjectArea == "Economics, Econometrics and Finance" ~ "Economics, Econometrics and Finance",
             SubjectArea == "Economics and Econometrics" ~ "Economics, Econometrics and Finance",
             SubjectArea == "Economics, Econometrics and Finance (miscellaneous)" ~ "Economics, Econometrics and Finance",
             SubjectArea == "Finance" ~ "Economics, Econometrics and Finance",
             SubjectArea == "General Economics, Econometrics and Finance" ~ "Economics, Econometrics and Finance",
+
+
+            # ! Split this field up...?
             SubjectArea == "Energy" ~ "Energy",
             SubjectArea == "Energy (miscellaneous)" ~ "Energy",
-            SubjectArea == "Energy Engineering and Power Technology" ~ "Energy",
+            SubjectArea == "Energy Engineering and Power Technology" ~ "Engineering",
             SubjectArea == "Fuel Technology" ~ "Energy",
             SubjectArea == "General Energy" ~ "Energy",
-            SubjectArea == "Nuclear Energy and Engineering" ~ "Energy",
-            SubjectArea == "Renewable Energy, Sustainability and the Environment" ~ "Energy",
+            SubjectArea == "Nuclear Energy and Engineering" ~ "Engineering",
+            SubjectArea == "Renewable Energy, Sustainability and the Environment" ~ "Environmental Science",
+
             SubjectArea == "Engineering" ~ "Engineering",
             SubjectArea == "Aerospace Engineering" ~ "Engineering",
             SubjectArea == "Architecture" ~ "Engineering",
@@ -270,6 +285,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Media Technology" ~ "Engineering",
             SubjectArea == "Ocean Engineering" ~ "Engineering",
             SubjectArea == "Safety, Risk, Reliability and Quality" ~ "Engineering",
+
             SubjectArea == "Environmental Science" ~ "Environmental Science",
             SubjectArea == "Ecological Modeling" ~ "Environmental Science",
             SubjectArea == "Ecology" ~ "Environmental Science",
@@ -284,6 +300,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Pollution" ~ "Environmental Science",
             SubjectArea == "Waste Management and Disposal" ~ "Environmental Science",
             SubjectArea == "Water Science and Technology" ~ "Environmental Science",
+
             SubjectArea == "Health Professions" ~ "Health Professions",
             SubjectArea == "Chiropractics" ~ "Health Professions",
             SubjectArea == "Complementary and Manual Therapy" ~ "Health Professions",
@@ -302,6 +319,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Radiological and Ultrasound Technology" ~ "Health Professions",
             SubjectArea == "Respiratory Care" ~ "Health Professions",
             SubjectArea == "Speech and Hearing" ~ "Health Professions",
+
             SubjectArea == "Immunology and Microbiology" ~ "Immunology and Microbiology",
             SubjectArea == "Applied Microbiology and Biotechnology" ~ "Immunology and Microbiology",
             SubjectArea == "General Immunology and Microbiology" ~ "Immunology and Microbiology",
@@ -310,6 +328,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Microbiology" ~ "Immunology and Microbiology",
             SubjectArea == "Parasitology" ~ "Immunology and Microbiology",
             SubjectArea == "Virology" ~ "Immunology and Microbiology",
+
             SubjectArea == "Materials Science" ~ "Materials Science",
             SubjectArea == "Biomaterials" ~ "Materials Science",
             SubjectArea == "Ceramics and Composites" ~ "Materials Science",
@@ -320,6 +339,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Metals and Alloys" ~ "Materials Science",
             SubjectArea == "Polymers and Plastics" ~ "Materials Science",
             SubjectArea == "Surfaces, Coatings and Films" ~ "Materials Science",
+
             SubjectArea == "Mathematics" ~ "Mathematics",
             SubjectArea == "Algebra and Number Theory" ~ "Mathematics",
             SubjectArea == "Analysis" ~ "Mathematics",
@@ -336,6 +356,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Numerical Analysis" ~ "Mathematics",
             SubjectArea == "Statistics and Probability" ~ "Mathematics",
             SubjectArea == "Theoretical Computer Science" ~ "Mathematics",
+
             SubjectArea == "Medicine" ~ "Medicine",
             SubjectArea == "Anatomy" ~ "Medicine",
             SubjectArea == "Anesthesiology and Pain Medicine" ~ "Medicine",
@@ -386,6 +407,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Surgery" ~ "Medicine",
             SubjectArea == "Transplantation" ~ "Medicine",
             SubjectArea == "Urology" ~ "Medicine",
+
             SubjectArea == "" ~ "Neuroscience",
             SubjectArea == "Behavioral Neuroscience" ~ "Neuroscience",
             SubjectArea == "Biological Psychiatry" ~ "Neuroscience",
@@ -397,6 +419,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Neurology" ~ "Neuroscience",
             SubjectArea == "Neuroscience (miscellaneous)" ~ "Neuroscience",
             SubjectArea == "Sensory Systems" ~ "Neuroscience",
+
             SubjectArea == "Nursing" ~ "Nursing",
             SubjectArea == "Advanced and Specialized Nursing" ~ "Nursing",
             SubjectArea == "Assessment and Diagnosis" ~ "Nursing",
@@ -422,6 +445,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Psychiatric Mental Health" ~ "Nursing",
             SubjectArea == "Research and Theory" ~ "Nursing",
             SubjectArea == "Review and Exam Preparation" ~ "Nursing",
+
             SubjectArea == "Pharmacology, Toxicology and Pharmaceutics" ~ "Pharmacology, Toxicology and Pharmaceutics",
             SubjectArea == "Drug Discovery" ~ "Pharmacology, Toxicology and Pharmaceutics",
             SubjectArea == "General Pharmacology, Toxicology and Pharmaceutics" ~ "Pharmacology, Toxicology and Pharmaceutics",
@@ -429,6 +453,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Pharmacology" ~ "Pharmacology, Toxicology and Pharmaceutics",
             SubjectArea == "Pharmacology, Toxicology and Pharmaceutics (miscellaneous)" ~ "Pharmacology, Toxicology and Pharmaceutics",
             SubjectArea == "Toxicology" ~ "Pharmacology, Toxicology and Pharmaceutics",
+
             SubjectArea == "Physics and Astronomy" ~ "Physics and Astronomy",
             SubjectArea == "Acoustics and Ultrasonics" ~ "Physics and Astronomy",
             SubjectArea == "Astronomy and Astrophysics" ~ "Physics and Astronomy",
@@ -441,6 +466,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Radiation" ~ "Physics and Astronomy",
             SubjectArea == "Statistical and Nonlinear Physics" ~ "Physics and Astronomy",
             SubjectArea == "Surfaces and Interfaces" ~ "Physics and Astronomy",
+
             SubjectArea == "Psychology" ~ "Psychology",
             SubjectArea == "Applied Psychology" ~ "Psychology",
             SubjectArea == "Clinical Psychology" ~ "Psychology",
@@ -450,6 +476,7 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Neuropsychology and Physiological Psychology" ~ "Psychology",
             SubjectArea == "Psychology (miscellaneous)" ~ "Psychology",
             SubjectArea == "Social Psychology" ~ "Psychology",
+
             SubjectArea == "Social Sciences" ~ "Social Sciences",
             SubjectArea == "Anthropology" ~ "Social Sciences",
             SubjectArea == "Archeology" ~ "Social Sciences",
@@ -466,6 +493,7 @@ analyse_citescore <- function(topFactor, citeScore) {
 
             # ! originally was Law -> Social
             SubjectArea == "Law" ~ "Law",
+
             SubjectArea == "Library and Information Sciences" ~ "Social Sciences",
             SubjectArea == "Life-span and Life-course Studies" ~ "Social Sciences",
             SubjectArea == "Linguistics and Language" ~ "Social Sciences",
@@ -476,12 +504,14 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Sociology and Political Science" ~ "Social Sciences",
             SubjectArea == "Transportation" ~ "Social Sciences",
             SubjectArea == "Urban Studies" ~ "Social Sciences",
+
             SubjectArea == "Veterinary" ~ "Veterinary",
             SubjectArea == "Equine" ~ "Veterinary",
             SubjectArea == "Food Animals" ~ "Veterinary",
             SubjectArea == "General Veterinary" ~ "Veterinary",
             SubjectArea == "Small Animals" ~ "Veterinary",
             SubjectArea == "Veterinary (miscellaneous)" ~ "Veterinary",
+
             SubjectArea == "General Business,Management and Accounting" ~ "Business, Management and Accounting",
             SubjectArea == "General Biochemistry,Genetics and Molecular Biology" ~ "Biochemistry,Genetics and Molecular Biology",
             TRUE ~ "Other"
@@ -494,27 +524,33 @@ analyse_citescore <- function(topFactor, citeScore) {
             Discipline == "Biochemistry,Genetics and Molecular Biology" ~ "Math, Chem, Enviro, & Bio Sciences",
             Discipline == "Environmental Science" ~ "Math, Chem, Enviro, & Bio Sciences",
             Discipline == "Mathematics" ~ "Math, Chem, Enviro, & Bio Sciences",
+            Discipline == "Immunology and Microbiology" ~ "Math, Chem, Enviro, & Bio Sciences",
 
             # Physical Sciences
             Discipline == "Earth and Planetary Sciences" ~ "Physical Sciences",
             Discipline == "Physics and Astronomy" ~ "Physical Sciences",
+
             # Tech & Comp Sciences
             Discipline == "Computer Science" ~ "Tech & Comp. Sciences",
 
             # Engineering
             Discipline == "Engineering" ~ "Engineering",
+            Discipline == "Chemical Engineering" ~ "Engineering",
 
             # Medical & Health Sciences
             Discipline == "Medicine" ~ "Medical & Health Sciences",
             Discipline == "Health Professions" ~ "Medical & Health Sciences",
             Discipline == "Nursing" ~ "Medical & Health Sciences",
             Discipline == "Pharmacology, Toxicology and Pharmaceutics" ~ "Medical & Health Sciences",
+            Discipline == "Veterinary" ~ "Medical & Health Sciences",
 
             # ASSH
             Discipline == "Arts and Humanities" ~ "ASSH",
             Discipline == "Social Sciences" ~ "ASSH",
+
             # Business & Law
-            Discipline == "Business, Management and Accounting" ~ "Business",
+            Discipline == "Business, Management and Accounting" ~ "Business & Economics",
+            Discipline == "Economics, Econometrics and Finance" ~ "Business & Economics",
             Discipline == "Law" ~ "Law",
 
             # Psych & Cog Sciences
