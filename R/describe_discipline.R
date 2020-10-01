@@ -6,7 +6,7 @@
 describe_discipline <- function(x) {
   x %<>%
     select(ParticipantNumber, Discipline, Barrier)
-  x <- x[complete.cases(x), ]
+  #x <- x[complete.cases(x), ]
   x %<>%
     distinct(ParticipantNumber, .keep_all = TRUE)
 

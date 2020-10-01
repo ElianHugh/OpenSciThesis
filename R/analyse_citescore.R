@@ -218,13 +218,13 @@ analyse_citescore <- function(topFactor, citeScore) {
             SubjectArea == "Signal Processing" ~ "Computer Science",
             SubjectArea == "Software" ~ "Computer Science",
 
-            # * TODO examine here
+            # ! Originally this section was Decision Science
             SubjectArea == "Decision Sciences" ~ "Decision Sciences",
             SubjectArea == "Decision Sciences (miscellaneous)" ~ "Decision Sciences",
             SubjectArea == "General Decision Sciences" ~ "Decision Sciences",
             SubjectArea == "Information Systems and Management" ~ "Decision Sciences",
             SubjectArea == "Management Science and Operations Research" ~ "Decision Sciences",
-            SubjectArea == "Statistics, Probability and Uncertainty" ~ "Decision Sciences",
+            SubjectArea == "Statistics, Probability and Uncertainty" ~ "Mathematics",
 
             SubjectArea == "Dentistry" ~ "Dentistry",
             SubjectArea == "Dental Assisting" ~ "Dentistry",
@@ -518,20 +518,30 @@ analyse_citescore <- function(topFactor, citeScore) {
         )) %>%
         mutate(GroupedDisc = case_when(
             # Math, Chem, Enviro, & Bio Sciences
-            Discipline == "Chemistry" ~ "Math, Chem, Enviro, & Bio Sciences",
-            Discipline == "Agricultural and Biological Sciences" ~ "Math, Chem, Enviro, & Bio Sciences",
-            Discipline == "Biochemistry, Genetics and Molecular Biology" ~ "Math, Chem, Enviro, & Bio Sciences",
-            Discipline == "Biochemistry,Genetics and Molecular Biology" ~ "Math, Chem, Enviro, & Bio Sciences",
-            Discipline == "Environmental Science" ~ "Math, Chem, Enviro, & Bio Sciences",
-            Discipline == "Mathematics" ~ "Math, Chem, Enviro, & Bio Sciences",
-            Discipline == "Immunology and Microbiology" ~ "Math, Chem, Enviro, & Bio Sciences",
+
+            Discipline == "Agricultural and Biological Sciences" ~ "Life Sciences",
+            Discipline == "Biochemistry, Genetics and Molecular Biology" ~ "Life Sciences",
+            Discipline == "Biochemistry,Genetics and Molecular Biology" ~ "Life Sciences",
+            Discipline == "Environmental Science" ~ "Life Sciences",
+            Discipline == "Immunology and Microbiology" ~ "Life Sciences",
+
+
+            # Discipline == "Chemistry" ~ "Math, Chem, Enviro, & Bio Sciences",
+            # Discipline == "Agricultural and Biological Sciences" ~ "Math, Chem, Enviro, & Bio Sciences",
+            # Discipline == "Biochemistry, Genetics and Molecular Biology" ~ "Math, Chem, Enviro, & Bio Sciences",
+            # Discipline == "Biochemistry,Genetics and Molecular Biology" ~ "Math, Chem, Enviro, & Bio Sciences",
+            # Discipline == "Environmental Science" ~ "Math, Chem, Enviro, & Bio Sciences",
+            # Discipline == "Mathematics" ~ "Math, Chem, Enviro, & Bio Sciences",
+            # Discipline == "Immunology and Microbiology" ~ "Math, Chem, Enviro, & Bio Sciences",
 
             # Physical Sciences
             Discipline == "Earth and Planetary Sciences" ~ "Physical Sciences",
             Discipline == "Physics and Astronomy" ~ "Physical Sciences",
+            Discipline == "Chemistry" ~ "Physical Sciences",
 
             # Tech & Comp Sciences
-            Discipline == "Computer Science" ~ "Tech & Comp. Sciences",
+            Discipline == "Computer Science" ~ "Mathematics & Comp. Sciences",
+            Discipline == "Mathematics" ~ "Mathematics & Comp. Sciences",
 
             # Engineering
             Discipline == "Engineering" ~ "Engineering",
@@ -549,9 +559,10 @@ analyse_citescore <- function(topFactor, citeScore) {
             Discipline == "Social Sciences" ~ "ASSH",
 
             # Business & Law
-            Discipline == "Business, Management and Accounting" ~ "Business & Economics",
-            Discipline == "Economics, Econometrics and Finance" ~ "Business & Economics",
-            Discipline == "Law" ~ "Law",
+            Discipline == "Business, Management and Accounting" ~ "Business, Law & Economics",
+            Discipline == "Economics, Econometrics and Finance" ~ "Business, Law & Economics",
+            Discipline == "Decision Science" ~ "Business, Law & Economics",
+            Discipline == "Law" ~ "Business, Law & Economics",
 
             # Psych & Cog Sciences
             Discipline == "Psychology" ~ "Psych. & Cog. Sciences",

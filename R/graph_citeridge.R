@@ -12,6 +12,10 @@ graph_citeridge <- function(df) {
   totalN <- sum(totalN$n)
 
   pal <- wes_palette("Darjeeling1")
+   title <- sprintf(
+     "Distribution of Cite Score with Open Science Implementation \n (n = %d)",
+     totalN
+   )
 
   citeGraph <- df %>%
     distinct(Title, .keep_all = TRUE) %>%
@@ -39,13 +43,14 @@ graph_citeridge <- function(df) {
       quantiles = 4,
       quantile_lines = TRUE
     ) +
-    ggtitle(paste0("N = ", totalN)) +
+    ggtitle(title) +
     scale_y_discrete(expand = c(0, 0)) +
     scale_x_continuous(expand = c(0, 0)) +
     theme_ridges(grid = FALSE, center_axis_labels = TRUE) +
     theme_apa() +
+    ylab("Open Science Implementation") +
     scale_fill_manual(values = pal, name = "Quartiles") +
-    theme(axis.ticks = element_blank())
+    theme(axis.ticks = element_blank(), text = element_text(size = 20))
 
   citeGraph
 }

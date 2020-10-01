@@ -15,7 +15,6 @@ graph_disciplines <- function(df, statsDiscipline, meta) {
     total_n
   )
 
-  # * TODO add early career vs late career to graph
 
   graphDiscBarr <-
     ggplot(
@@ -31,6 +30,7 @@ graph_disciplines <- function(df, statsDiscipline, meta) {
     scale_fill_discrete(name = "Discipline") +
     ggtitle(title) +
     theme_apa(base_size = 11) +
+    theme(text = element_text(size = 20)) + 
     scale_y_continuous(expand = c(0, 0), limits = c(0, 100))
   
   graphDiscBarr

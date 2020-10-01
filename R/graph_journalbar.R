@@ -75,7 +75,7 @@ graph_journalbar <- function(df) {
     )) +
     ggtitle("Open Science Practice Implementation for TOP Factor Journals") +
     theme_apa() +
-    theme(legend.position = "none") +
+    theme(legend.position = "none", text = element_text(size=20)) +
     scale_fill_manual(values = c(pal, pal2)) +
     ylab("Percentage of journals that implement practice")
 

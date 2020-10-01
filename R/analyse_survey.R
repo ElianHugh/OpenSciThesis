@@ -74,20 +74,44 @@ analyse_survey <- function(df) {
   df %<>%
     mutate(
       Discipline = case_when(
-        FORcode_1 == "01" |
-          FORcode_1 == "03" |
-          FORcode_1 == "05" |
-          FORcode_1 == "06" ~ "Math, Chem, Enviro, & Bio Sciences",
-        FORcode_1 == "02" ~ "Physical Sciences",
-        FORcode_1 == "8" | FORcode_1 == "10" ~ "Tech & Comp Sciences",
-        FORcode_1 == "09" ~ "Engineering",
-        FORcode_1 == "11" ~ "Medical & Health Sciences",
-        FORcode_1 == "13" |
-          FORcode_1 == "16" | FORcode_1 == "19" | FORcode_1 == "20" ~ "ASSH",
-        FORcode_1 == "14" |
-          FORcode_1 == "15" | FORcode_1 == "18" ~ "Business & Law",
-        FORcode_1 == "17" ~ "Psych & Cog. Sciences",
-        TRUE ~ NA_character_
+        # Physical Sciences
+        FORcode_1 == "02" | # Chemical Science
+        FORcode_1 == "03" | # Physical Sciences
+        FORcode_1 == "04" ~ "Physical Sciences", # Earth Sciences
+
+        # Life Sciences
+        FORcode_1 == "05" | # Environmental Science
+        FORcode_1 == "06" | # Biological Science
+        FORcode_1 == "07" ~ "Life Sciences", # Agricultural and Veterinary Sciences
+
+        # Mathematics & Comp. Sciences
+        FORcode_1 == "01" | # Mathematics
+        FORcode_1 == "08"  | # Information and Computer Sciences
+        FORcode_1 == "10" ~ "Math & Comp Sciences", # Technology
+
+        # Business, Economics, and Law
+        FORcode_1 == "14" | # Economics
+        FORcode_1 == "15" | # Commerce
+        FORcode_1 == "18" ~ "Business, & Law", # Law and Legal Studies
+
+        # Psych. & Cog. Sciences
+        FORcode_1 == "17" ~ "Psych & Cog. Sciences", # Psych. & Cog. Sciences
+
+        # ASSH
+        FORcode_1 == "13" | # Education
+        FORcode_1 == "16" | # Studies in Human Society
+        FORcode_1 == "19" | # Studies in Creative Arts and Writing
+        FORcode_1 == "20" | # Language, Communication, and Culture
+        FORcode_1 == "21" | # History and Archaeology
+        FORcode_1 == "22" ~ "ASSH", # Philosophy and Religious Studies
+
+        # Engineering
+        FORcode_1 == "09" ~ "Engineering", # Engineering
+
+        # Medical & Health Sciences 
+        FORcode_1 == "11" ~ "Medical & Health Sciences", # Medical & Health Sciences
+
+        TRUE ~ "Other"
       )
     )
   return(df)

@@ -30,7 +30,7 @@ for (i in 1:length(my_label)) {
         textrect(mid = pos[i, ], radx = my_edge_length, rady = my_edge_length/2, lab = paste0("Records obtained from TOP \nfactor database \n (n = ", topfacN, ")"), cex = my_text_size, box.col = "#FFFFFF")
       
       } else if (i == 4) {
-             textrect(mid = pos[i, ], radx = my_edge_length, rady = my_edge_length/2, lab = paste0("Records obtained from Scopus \n database \n (n = ", citeN, ")"), cex = my_text_size, box.col = "#FFFFFF")
+             textrect(mid = pos[i, ], radx = my_edge_length, rady = my_edge_length*.8, lab = paste0("Records obtained from\n Scopus \n database \n (n = ", citeN, ")"), cex = my_text_size, box.col = "#FFFFFF")
       } else if (i ==10) {
            textrect(mid = pos[i, ], radx = my_edge_length, rady = my_edge_length/2, lab = paste0("Records discarded \n (n = ", differenceN, ")"), cex = my_text_size, box.col = "#FFFFFF")
       } else if (i == 9) {
@@ -38,7 +38,7 @@ for (i in 1:length(my_label)) {
       } else if (i == 15) {
              textrect(mid = pos[i, ], radx = my_edge_length, rady = my_edge_length/2, lab = paste0("Records after filter \n (n = ", filteredN, ")"), cex = my_text_size, box.col = "#FFFFFF")
       } else if (i==16){
-              textrect(mid = pos[i, ], radx = my_edge_length, rady = my_edge_length / 2, lab = paste0("Records without Sherpa matches \n (n = ", sherpadiffN, ")"), cex = my_text_size, box.col = "#FFFFFF")
+              textrect(mid = pos[i, ], radx = my_edge_length, rady = my_edge_length / 2, lab = paste0("Records without\n Sherpa matches \n (n = ", sherpadiffN, ")"), cex = my_text_size, box.col = "#FFFFFF")
       } else if (i==21){
               textrect(mid = pos[i, ], radx = my_edge_length, rady = my_edge_length/2, lab = paste0("Final  \n (n = ", finalN, ")"), cex = my_text_size, box.col = "#FFFFFF")
       }
