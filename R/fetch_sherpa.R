@@ -1,3 +1,15 @@
+# ? How does this work? 
+# 1. We take in a list of journals
+# 2. We submit the journals to the Sherpa API via parallel processing
+# 3. We then filter the returned JSON object for policies, and change it
+#    into a dataframe
+# 4. If there are no policies for a given journal, we attempt
+#    to find more by trying: inputting ISSN instead of title,
+#    trying a modified title, and trying to find the journal
+#    through the publisher (using string distance to see if the
+#    journal exists)
+# 5. All policies found are then returned as a single dataframe
+#    for further analysis
 fetch_sherpa <- function(combinedCite, key) {
 
     # * TODO Distinguish between types of OA better, e.g. OA fees vs none
@@ -415,10 +427,6 @@ fetch_sherpa <- function(combinedCite, key) {
     if (length(API) > 0) {
         parse6 <- explore_json(API)
     }
-
-    # * TODO Find policy via the publisher and not the journal
-    # * I.e. the last resort, use publisher policies as journal policies
-
 
     ##############################
     # Synthesis                  #

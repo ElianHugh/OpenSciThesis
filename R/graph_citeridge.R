@@ -1,7 +1,5 @@
 graph_citeridge <- function(df) {
 
-  # TODO either include open access in the calculated score, or explain why not
-
   df %<>%
     dplyr::filter(Top10Perc == TRUE)
 
@@ -44,13 +42,13 @@ graph_citeridge <- function(df) {
       quantile_lines = TRUE
     ) +
     ggtitle(title) +
-    scale_y_discrete(expand = c(0, 0)) +
-    scale_x_continuous(expand = c(0, 0)) +
-    theme_ridges(grid = FALSE, center_axis_labels = TRUE) +
-    theme_apa() +
-    ylab("Open Science Implementation") +
-    scale_fill_manual(values = pal, name = "Quartiles") +
-    theme(axis.ticks = element_blank(), text = element_text(size = 20))
+      scale_y_discrete(expand = c(0, 0)) +
+      scale_x_continuous(expand = c(0, 0)) +
+      theme_ridges(grid = FALSE, center_axis_labels = TRUE) +
+      theme_apa() +
+      ylab("Open Science Implementation") +
+      scale_fill_manual(values = pal) +
+      theme(axis.ticks = element_blank(), text = element_text(size = 20), legend.position = "none")
 
   citeGraph
 }

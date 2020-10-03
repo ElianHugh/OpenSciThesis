@@ -17,6 +17,7 @@ the_plan <-
     save_sherpa = store_sherpa(fetchPolicies),
     journalPolicies = get_sherpa(save_sherpa),
     combinedPolicies = combine_journals(combinedCite, journalPolicies),
+    aggregatePolicies = aggregate_score(combinedPolicies),
 
     # Describe
     statsCareer = describe_career(barrierAnalysis),
@@ -31,8 +32,7 @@ the_plan <-
     # Graphs
     careerGraph = graph_careers(statsCareer, barrierAnalysis, openSci),
     disciplineGraph = graph_disciplines(barrierAnalysis, statsDiscipline, meta),
-    openRidge = graph_openridge(combinedPolicies),
-    citeRidge = graph_citeridge(combinedPolicies),
+    citeRidge = graph_citeridge(aggregatePolicies),
     journalBar = graph_journalbar(combinedPolicies),
     flowGraph = graph_flow(statsFlow),
 

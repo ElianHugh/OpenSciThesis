@@ -569,27 +569,16 @@ analyse_citescore <- function(topFactor, citeScore) {
             Discipline == "Neuroscience" ~ "Psych. & Cog. Sciences",
             TRUE ~ "Other"
         ))
-    df$OSS <- df %>%
-        select(DataCitation:Badges) %>%
-        rowSums(na.rm = TRUE)
-
-    df %<>% mutate(
-        ScoreGrade = quantcut(df$OSS, q = 5)
-    )
-
-    df %<>%
-        group_by(GroupedDisc) %>%
-        distinct(Title, .keep_all = TRUE) %>%
-        add_tally()
-    levels(df$ScoreGrade) <- c(
-        "None", "Low",
-        "Medium", "High", "Very High"
-    )
 
 
     # ! I don't why this doesn't work above but...
     df %<>%
         dplyr::filter(Title != "Meta-Psychology")
+
+ df %<>%
+     group_by(GroupedDisc) %>%
+     distinct(Title, .keep_all = TRUE) %>%
+     add_tally()
 
     return(df)
 }

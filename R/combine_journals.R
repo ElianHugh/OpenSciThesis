@@ -18,7 +18,7 @@ message("Number of unique journals found in journalPolicies: ", journalRow)
   journalPolicies %<>%
     select(-ISSN) %>%
     distinct(Title, .keep_all = TRUE) %>%
-     mutate_at(vars(Submitted:Accepted), ~ case_when(
+     mutate_at(vars(Submitted:Published), ~ case_when(
         . == TRUE ~ 1,
         . == FALSE ~ 0,
         . == NA ~ 999,
