@@ -1,18 +1,15 @@
 # OpenSciThesis
 
-To run, source the make.R file
+To run, source the [make.R file](make.R)
 
 ### Code for my Honours thesis on open science practice
 
-This repository contains the R code for my honours thesis analysis. It uses the drake package (see: https://github.com/ropensci/drake) and Miles McBain's dflow (https://github.com/MilesMcBain/dflow) for structuring the file base.
+This repository contains the R code for my honours thesis analysis. It uses the [drake package](https://github.com/ropensci/drake) and Miles McBain's [dflow](https://github.com/MilesMcBain/dflow) for structuring the file base.
 
-Please see below for dependencies and workflow of the code
-
-![Image of drake plan](code.png)
-(This can be found in the plan.R file.)
+Please see [here](R/plan.R) for the drake code plan. Each file in the R folder is [used as a function](https://books.ropensci.org/drake/scripts.html#function-oriented-workflows) in the plan.
 
 ### This code cannot be run on its own!
-As I do not have ownership over the data used, the data/ folder is not part of this repository. If permission is given for the data to be uploaded, it will likely be uploaded to the Open Science Framework (i.e. osf.io/).
+As I do not have ownership over the data used, the data/ folder is not part of this repository. If permission is given for the data to be uploaded, it will likely be uploaded to the [Open Science Framework](osf.io/).
 
 The data files that are missing are:
 
