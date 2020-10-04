@@ -17,5 +17,7 @@ aggregate_score <- function(df) {
         "Medium", "High", "Very High"
     )
 
+    df %<>%
+        distinct(Title, .keep_all = TRUE)
     return(df)
 }

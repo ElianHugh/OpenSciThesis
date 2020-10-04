@@ -559,10 +559,10 @@ analyse_citescore <- function(topFactor, citeScore) {
             Discipline == "Social Sciences" ~ "ASSH",
 
             # Business & Law
-            Discipline == "Business, Management and Accounting" ~ "Business, Law & Economics",
-            Discipline == "Economics, Econometrics and Finance" ~ "Business, Law & Economics",
-            Discipline == "Decision Science" ~ "Business, Law & Economics",
-            Discipline == "Law" ~ "Business, Law & Economics",
+            Discipline == "Business, Management and Accounting" ~ "Business & Law",
+            Discipline == "Economics, Econometrics and Finance" ~ "Business & Law",
+            Discipline == "Decision Science" ~ "Business & Law",
+            Discipline == "Law" ~ "Business & Law",
 
             # Psych & Cog Sciences
             Discipline == "Psychology" ~ "Psych. & Cog. Sciences",

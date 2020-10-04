@@ -18,6 +18,7 @@ the_plan <-
     journalPolicies = get_sherpa(save_sherpa),
     combinedPolicies = combine_journals(combinedCite, journalPolicies),
     aggregatePolicies = aggregate_score(combinedPolicies),
+    pivotedPolicies = pivot_score(combinedPolicies),
 
     # Describe
     statsCareer = describe_career(barrierAnalysis),
@@ -33,7 +34,7 @@ the_plan <-
     careerGraph = graph_careers(statsCareer, barrierAnalysis, openSci),
     disciplineGraph = graph_disciplines(barrierAnalysis, statsDiscipline, meta),
     citeRidge = graph_citeridge(aggregatePolicies),
-    journalBar = graph_journalbar(combinedPolicies),
+    journalBar = graph_journalbar(pivotedPolicies),
     flowGraph = graph_flow(statsFlow),
 
     # Markdown

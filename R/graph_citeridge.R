@@ -8,6 +8,10 @@ graph_citeridge <- function(df) {
     distinct(Title, .keep_all = TRUE) %>%
     count()
   totalN <- sum(totalN$n)
+  
+  df %<>%
+    group_by(ScoreGrade) %>%
+    mutate(N = paste0(ScoreGrade, ", n = ", n()))
 
   pal <- wes_palette("Darjeeling1")
    title <- sprintf(
@@ -16,8 +20,7 @@ graph_citeridge <- function(df) {
    )
 
   citeGraph <- df %>%
-    distinct(Title, .keep_all = TRUE) %>%
-    mutate(ScoreGrade = factor(ScoreGrade,
+   mutate(ScoreGrade = factor(ScoreGrade,
       levels = c(
         "Very High",
         "High",
@@ -40,10 +43,10 @@ graph_citeridge <- function(df) {
       calc_ecdf = TRUE,
       quantiles = 4,
       quantile_lines = TRUE
-    ) +
+    ) + 
     ggtitle(title) +
-      scale_y_discrete(expand = c(0, 0)) +
       scale_x_continuous(expand = c(0, 0)) +
+      scale_y_discrete(expand = c(0, 0)) + 
       theme_ridges(grid = FALSE, center_axis_labels = TRUE) +
       theme_apa() +
       ylab("Open Science Implementation") +
