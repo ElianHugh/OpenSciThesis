@@ -9,7 +9,7 @@ This repository contains the R code for my honours thesis analysis. It uses the 
 Please see [here](R/plan.R) for the drake code plan. Each file in the R folder is [used as a function](https://books.ropensci.org/drake/scripts.html#function-oriented-workflows) in the plan.
 
 ### This code cannot be run on its own!
-As I do not have ownership over the data used, the data/ folder is not part of this repository. If permission is given for the data to be uploaded, it will likely be uploaded to the [Open Science Framework](osf.io/).
+As I do not have ownership over the data used, the data/ folder is not part of this repository. If permission is given for the data to be uploaded, it will likely be uploaded to the [Open Science Framework](https://osf.io/cxus9/).
 
 The data files that are missing are:
 
