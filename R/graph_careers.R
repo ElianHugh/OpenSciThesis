@@ -41,7 +41,10 @@ graph_careers <- function(statsCareer, barrierAnalysis, openSci) {
 
   ## FIX THIS
   df.Plotting <- full_join(studentPlot, academicPlot) %>%
-    mutate(Perc = if_else(CareerLevel == "Academic", -Perc, Perc))
+    mutate(
+      Perc = if_else(CareerLevel == "Academic", -Perc, Perc)
+    )
+    
   tempDf <- na.omit(df.Plotting) %>%
     dplyr::filter(CareerLevel == "Academic") %>%
     arrange(desc(Perc))
@@ -49,7 +52,11 @@ graph_careers <- function(statsCareer, barrierAnalysis, openSci) {
 
   # Graph barriers by career level (grouped)
   # IMPORTANT to omit NAs, as otherwise will inflate responses
-  total_n <- sum(statsCareer$n)
+  total_n <- statsCareer %>%
+                  dplyr::filter(CareerLevel == "Academic" |
+                         CareerLevel == "HDR Student") %>%
+                         select(n) %>%
+                           sum()
   title <- sprintf(
     "Perceived Barriers to Open Science by Career Level\n (n = %d)",
     total_n

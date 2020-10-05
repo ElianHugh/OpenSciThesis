@@ -25,14 +25,19 @@ graph_disciplines <- function(df, statsDiscipline, meta) {
         fill = fct_infreq(Discipline)
       )
     ) +
-    geom_bar() +
+    geom_bar(position="fill") +
     coord_flip() +
     xlab("Barriers") +
     ggtitle(title) +
     theme_apa(base_size = 11) +
     theme(text = element_text(size = 20)) + 
-    scale_fill_manual(name = "Discipline", values = c(pal, pal2)) +
-    scale_y_continuous(expand = c(0, 0), limits = c(0, 100))
+    scale_fill_manual(name = "Discipline", values = c(pal, pal2)) 
   
+# * TODO combine graphs here
+barrierAnalysis %>%
+   dplyr::filter(!is.na(Barrier)) %>%
+   ggplot(aes(x = fct_infreq(Barrier))) + geom_bar() + coord_flip()
+
+
   graphDiscBarr
 }
