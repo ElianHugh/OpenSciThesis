@@ -1,3 +1,6 @@
+# Graphs the process of data extraction,
+# aggregation, processiong, and synthesis
+# Similar to a PRISMA diagram
 graph_flow <- function(statsFlow){
 
 topfacN <- statsFlow$topfacN

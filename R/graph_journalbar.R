@@ -1,3 +1,6 @@
+# Plot journal open science policies by
+# the number of journals that implement the practice.
+# Grouped by discipline.
 graph_journalbar <- function(graphdf) {
 
   pal <- wes_palette("Darjeeling1")

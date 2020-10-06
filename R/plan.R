@@ -1,3 +1,7 @@
+# Details the workflow for the thesis
+# Each function is sourced from a separate
+# file for cleanliness, and is processed according to the
+# to the plan below.
 source(file_in("R/load_functions.R"))
 
 the_plan <-

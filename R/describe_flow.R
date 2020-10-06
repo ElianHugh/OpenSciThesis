@@ -1,3 +1,5 @@
+# Returns a dataframe that calculates the changes in
+# the number of cases. Used in the flow graph.
 describe_flow <- function(topFactor, combinedCite, citeScore, combinedPolicies) {
 topfacN <- topFactor %>%
     select(Title) %>%

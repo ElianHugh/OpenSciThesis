@@ -1,8 +1,3 @@
-#' title
-#' @param param
-#' @return return
-#' @author author
-#' @export
 describe_discipline <- function(x) {
   x %<>%
     select(ParticipantNumber, Discipline, Barrier)

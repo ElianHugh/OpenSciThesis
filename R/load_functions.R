@@ -25,7 +25,7 @@ coalesce_join <- function(x, y,
     dplyr::bind_cols(joined, coalesced)[cols]
 }
 
-# My little function
+# misc. matching function
 # Returns false if both strings have no space
 checkmatch <- function(x, y) {
     if ((str_detect(x, "\\s")) && (str_detect(y, "\\s"))) {

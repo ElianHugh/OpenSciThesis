@@ -1,4 +1,3 @@
-# ? How does this work? 
 # 1. We take in a list of journals
 # 2. We submit the journals to the Sherpa API via parallel processing
 # 3. We then filter the returned JSON object for policies, and change it

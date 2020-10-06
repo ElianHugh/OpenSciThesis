@@ -1,8 +1,4 @@
-#' title
-#' @param param
-#' @return return
-#' @author author
-#' @export
+# Returns a simple grouped N
 describe_journal <- function(x) {
   x %<>%
     group_by(Discipline) %>%

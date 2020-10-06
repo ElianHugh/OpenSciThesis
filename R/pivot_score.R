@@ -1,3 +1,5 @@
+# Pivots the journal policy dataframe
+# to allow for subsequent graphing
 pivot_score <- function(df) {
     graphdf <- df %>%
         dplyr::filter(Top10Perc == TRUE) %>%

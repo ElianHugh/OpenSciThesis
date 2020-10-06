@@ -1,12 +1,5 @@
-##' .. content for \description{} (no empty lines) ..
-##' .. content for \details{} ..
-##'
-##' @title
-##' @param
-##' @return
-##' @author
-##' @export
-
+# Import top factor from its file,
+# ignore superflous columns.
 get_topFactor <- function() {
     topFactor <- readr::read_csv(file_in("data/top-factor.csv"),
         col_types = cols(

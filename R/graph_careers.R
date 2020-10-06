@@ -1,12 +1,5 @@
-##' .. content for \description{} (no empty lines) ..
-##' .. content for \details{} ..
-##'
-##' @title
-##' @param
-##' @return
-##' @author
-##' @export
-
+# Graphs a comparison between academic
+# and HDR student survey responses
 graph_careers <- function(statsCareer, barrierAnalysis, openSci) {
   a <- openSci %>%
     select(ParticipantNumber, CareerLevel) %>%
@@ -15,7 +8,6 @@ graph_careers <- function(statsCareer, barrierAnalysis, openSci) {
   a <- left_join(a, barrierAnalysis)
   a$Barrier <- fct_infreq(a$Barrier)
   a$CareerLevel <- fct_infreq(a$CareerLevel)
-
 
   n_HDR <- statsCareer %>%
     dplyr::filter(CareerLevel == "HDR Student") %>%

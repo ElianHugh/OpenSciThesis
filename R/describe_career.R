@@ -1,8 +1,3 @@
-#' title
-#' @param param
-#' @return return
-#' @author author
-#' @export
 describe_career <- function(y) {
   y %<>%
     select(ParticipantNumber, CareerLevel, Barrier)
