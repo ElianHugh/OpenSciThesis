@@ -1,6 +1,13 @@
 # Graphs a comparison between academic
 # and HDR student survey responses
-graph_careers <- function(statsCareer, barrierAnalysis, openSci) {
+graph_careers <- function(barrierAnalysis, openSci) {
+
+  participants <- barrierAnalysis %>%
+    select(ParticipantNumber, CareerLevel, Barrier)  %>% 
+    distinct(ParticipantNumber, .keep_all = TRUE)  %>% 
+    group_by(CareerLevel) %>%
+    tally()
+
   a <- openSci %>%
     select(ParticipantNumber, CareerLevel) %>%
     dplyr::filter(CareerLevel != "Unlisted") %>%
@@ -9,12 +16,12 @@ graph_careers <- function(statsCareer, barrierAnalysis, openSci) {
   a$Barrier <- fct_infreq(a$Barrier)
   a$CareerLevel <- fct_infreq(a$CareerLevel)
 
-  n_HDR <- statsCareer %>%
+  n_HDR <- participants %>%
     dplyr::filter(CareerLevel == "HDR Student") %>%
     select(n) %>%
     as.numeric()
 
-  n_Academic <- statsCareer %>%
+  n_Academic <- participants %>%
     dplyr::filter(CareerLevel == "Academic") %>%
     select(n) %>%
     as.numeric()
@@ -44,7 +51,7 @@ graph_careers <- function(statsCareer, barrierAnalysis, openSci) {
 
   # Graph barriers by career level (grouped)
   # IMPORTANT to omit NAs, as otherwise will inflate responses
-  total_n <- statsCareer %>%
+  total_n <- participants %>%
                   dplyr::filter(CareerLevel == "Academic" |
                          CareerLevel == "HDR Student") %>%
                          select(n) %>%

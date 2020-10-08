@@ -35,8 +35,8 @@ the_plan <-
     ),
 
     # Graphs
-    careerGraph = graph_careers(statsCareer, barrierAnalysis, openSci),
-    disciplineGraph = graph_disciplines(barrierAnalysis, statsDiscipline, meta),
+    careerGraph = graph_careers(barrierAnalysis, openSci),
+    disciplineGraph = graph_disciplines(barrierAnalysis, meta),
     citeRidge = graph_citeridge(aggregatePolicies),
     journalBar = graph_journalbar(pivotedPolicies),
     flowGraph = graph_flow(statsFlow),

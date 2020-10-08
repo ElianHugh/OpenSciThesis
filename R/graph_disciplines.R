@@ -2,8 +2,15 @@
 # grouped by discipline, for each item.
 # Then, plot the distribution of responses,
 # grouped by discipline.
-graph_disciplines <- function(df, statsDiscipline, meta) {
-  total_n <- statsDiscipline %>%
+graph_disciplines <- function(df, meta) {
+
+  participants <- df %>%
+    select(ParticipantNumber, Discipline, Barrier)  %>%
+    distinct(ParticipantNumber, .keep_all = TRUE)  %>% 
+    group_by(Discipline) %>%
+    tally()
+
+  total_n <- participants %>%
     dplyr::filter(Discipline != "Other") %>%
     select(n) %>%
     sum()
