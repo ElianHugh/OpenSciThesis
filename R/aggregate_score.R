@@ -15,8 +15,12 @@ aggregate_score <- function(df) {
         "Medium", "High", "Very High"
     )
 
+    df$Title <- coalesce(df$MatchTitle, df$Title)
+
     df %<>%
-        distinct(Title, .keep_all = TRUE)
+        distinct(Title, .keep_all = TRUE) %>%
+        select(-DataCitation:-Badges, -Submitted:-Published, -MatchTitle, -SubjectArea,-Discipline,-Publisher,-ISSN)
+    
 
     return(df)
 }

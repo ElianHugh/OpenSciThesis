@@ -51,6 +51,5 @@ pivot_score <- function(df) {
             "Published"
         )
     )
-
     return(graphdf)
 }

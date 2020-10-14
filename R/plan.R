@@ -22,6 +22,7 @@ the_plan <-
     journalPolicies = get_sherpa(save_sherpa),
     combinedPolicies = combine_journals(combinedCite, journalPolicies),
     aggregatePolicies = aggregate_score(combinedPolicies),
+    sampleSim = analyse_similarity(aggregatePolicies, citeScore),
     pivotedPolicies = pivot_score(combinedPolicies),
 
     # Describe
