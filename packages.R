@@ -14,7 +14,7 @@ library(fuzzyjoin)
 library(gtools)
 library(rlist)
 library(psych)
-library(BEST)
+library(coxed)
 
 # Data Viz
 library(ggplot2)

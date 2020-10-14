@@ -1,33 +1,46 @@
 analyse_similarity <- function(aggregatePolicies, citeScore) {
-    # A is our priors for mean and sd
-    A <- citeScore %>%
-        filter(`Top 10% (CiteScore Percentile)` == TRUE) %>%
-        dplyr::select(CiteScore)
-    priors <- list(
-        muM = mean(A$CiteScore),
-        muSD = sd(A$CiteScore),
-        sigmaMode = ,
-        sigmaSD =    
-    )
+    bootstrap <- function(x) {
+        out <- sample(x$CiteScore, size = nrow(var2), replace = T)
+        tibble(
+            Mean = mean(out),
+            SD = sd(out)
+        )
+    }
 
-    B <- aggregatePolicies %>%
-        filter(Top10Perc == TRUE) %>%
-        dplyr::select(Title, CiteScore)
-    
-    # Random sample of A - B with length B
-    AnB <- citeScore %>%
+    var <- citeScore %>%
         filter(`Top 10% (CiteScore Percentile)` == TRUE) %>%
         distinct(Title, .keep_all = TRUE) %>%
-        anti_join(B, by = "Title") %>%
-        select(Title, CiteScore) %>%
-        sample_n(nrow(B))
+        dplyr::select(CiteScore)
 
+    var2 <- aggregatePolicies %>%
+        filter(Top10Perc == TRUE) %>%
+        distinct(Title, .keep_all = TRUE) %>%
+        select(CiteScore)
 
-    BESTout <- BESTmcmc(
-        y1 = B$CiteScore,
-        y2 = AnB$CiteScore,
-        priors = priors,
-        parallel = TRUE
-    )
-    return(BESTout)
+    set.seed(1234)
+    iterations <- 1000
+    boot.out <- tibble(Mean = numeric(), SD = numeric())
+    for (i in 1:iterations) {
+        df <- bootstrap(var)
+        boot.out %<>%
+            add_row(df)
+    }
+
+    boot.SE <- sd(boot.out$Mean)
+    boot.m.CI <- bca(boot.out$Mean)
+    boot.sd.CI <- bca(boot.out$SD)
+
+    boot.table <- tibble(
+        Low = boot.sd.CI[1],
+        High = boot.sd.CI[2],
+        Statistic = "SD",
+        Sample = "Bootstrap"
+    ) %>%
+        add_case(
+            Low = boot.m.CI[1],
+            High = boot.m.CI[2],
+            Statistic = "Mean",
+            Sample = "Bootstrap"
+        )
+    return(boot.table)
 }
