@@ -37,7 +37,6 @@ the_plan <-
     statsBoot = describe_similarity(sampleSim),
 
     # Graphs
-    careerGraph = graph_careers(barrierAnalysis, openSci),
     disciplineGraph = graph_disciplines(barrierAnalysis, meta),
     citeRidge = graph_citeridge(aggregatePolicies),
     journalBar = graph_journalbar(pivotedPolicies),
