@@ -17,30 +17,27 @@ analyse_similarity <- function(aggregatePolicies, citeScore) {
         distinct(Title, .keep_all = TRUE) %>%
         select(CiteScore)
 
-    set.seed(1234)
-    iterations <- 1000
     boot.out <- tibble(Mean = numeric(), SD = numeric())
-    for (i in 1:iterations) {
-        df <- bootstrap(var)
-        boot.out %<>%
-            add_row(df)
+
+    set.seed(1234)
+    iterations <- 100000
+
+    pb <- new_bar(iterations)
+    cores <- detectCores()
+    cl <- snow::makeCluster(cores, type = "SOCK")
+    registerDoSNOW(cl)
+    opts <- list(progress = (function(n) setTxtProgressBar(pb, n)))
+
+    boot.out <- foreach(i = 1:iterations,
+    .options.snow = opts,
+    .errorhandling = "remove",
+    .combine = 'rbind',
+    .packages = "tidyverse") %dopar% {
+         x <- bootstrap(var)
+         return(x)
     }
 
-    boot.SE <- sd(boot.out$Mean)
-    boot.m.CI <- bca(boot.out$Mean)
-    boot.sd.CI <- bca(boot.out$SD)
+    close(pb)
 
-    boot.table <- tibble(
-        Low = boot.sd.CI[1],
-        High = boot.sd.CI[2],
-        Statistic = "SD",
-        Sample = "Bootstrap"
-    ) %>%
-        add_case(
-            Low = boot.m.CI[1],
-            High = boot.m.CI[2],
-            Statistic = "Mean",
-            Sample = "Bootstrap"
-        )
-    return(boot.table)
+    return(boot.out)
 }

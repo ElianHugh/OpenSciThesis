@@ -38,3 +38,23 @@ checkmatch <- function(x, y) {
         }
     }
 }
+
+    ##############################
+    #  Helper Functions          #
+    ##############################
+
+    #' Create new progress bar
+    #' Shortcut for creating a new progress bar
+    #' @param count. The number of iterations that the progress bar goes for
+    #' @usage new_bar(count)
+    #' @examples
+    #' count <- 5
+    #' new_bar(count)
+    new_bar <- function(count) {
+        pb <- txtProgressBar(
+            min = 0,
+            max = count,
+            style = 3
+        )
+        pb
+    }

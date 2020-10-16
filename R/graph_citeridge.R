@@ -13,7 +13,11 @@ graph_citeridge <- function(df) {
     group_by(ScoreGrade) %>%
     mutate(N = paste0(ScoreGrade, ", n = ", n()))
 
-  pal <- wes_palette("Darjeeling1")
+  pal <- c(
+    "#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499",
+    "#44AA99", "#999933", "#882255", "#661100", "#6699CC", "#888888"
+  )
+  
    title <- sprintf(
      "Distribution of Cite Score with Open Science Implementation \n (n = %d)",
      totalN

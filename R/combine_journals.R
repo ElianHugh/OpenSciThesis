@@ -1,8 +1,3 @@
-#' title
-#' @param param
-#' @return return
-#' @author author
-#' @export
 combine_journals <- function(combinedCite, journalPolicies) {
 
 combinedRow <- combinedCite %>%
@@ -21,7 +16,7 @@ message("Number of unique journals found in journalPolicies: ", journalRow)
      mutate_at(vars(Submitted:Published), ~ case_when(
         . == TRUE ~ 1,
         . == FALSE ~ 0,
-        . == NA ~ 999,
+        is.na(.) ~ 999,
         TRUE ~ 999
     ))
  

@@ -13,26 +13,6 @@ fetch_sherpa <- function(combinedCite, key) {
 
     # * TODO Distinguish between types of OA better, e.g. OA fees vs none
 
-    ##############################
-    #  Helper Functions          #
-    ##############################
-
-    #' Create new progress bar
-    #' Shortcut for creating a new progress bar
-    #' @param count. The number of iterations that the progress bar goes for
-    #' @usage new_bar(count)
-    #' @examples
-    #' count <- 5
-    #' new_bar(count)
-    new_bar <- function(count) {
-        pb <- txtProgressBar(
-            min = 0,
-            max = count,
-            style = 3
-        )
-        pb
-    }
-
     #' Fetch a nested JSON from Sherpa
     #' MUST OPEN AND CLOSE CORE CLUSTERS PRIOR TO AND FOLLOWING THIS FUNCTION
     #' @param opts.
@@ -309,6 +289,7 @@ fetch_sherpa <- function(combinedCite, key) {
     ##############################
 
     if (exists("parse4")) {
+        print(parse4)
         foundJournals <- parse4 %>%
             distinct()
 

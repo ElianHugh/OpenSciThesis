@@ -24,3 +24,7 @@ The data files that are missing are:
 
 - Survey data
   - This cannot currently be obtained without permission. If uploaded, will be on the OSF.
+
+### Dependency Graph
+
+![dependency graph](plot.png)

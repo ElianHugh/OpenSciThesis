@@ -34,6 +34,7 @@ the_plan <-
       citeScore,
       combinedPolicies
     ),
+    statsBoot = describe_similarity(sampleSim),
 
     # Graphs
     careerGraph = graph_careers(barrierAnalysis, openSci),
@@ -41,6 +42,7 @@ the_plan <-
     citeRidge = graph_citeridge(aggregatePolicies),
     journalBar = graph_journalbar(pivotedPolicies),
     flowGraph = graph_flow(statsFlow),
+    bootGraph = graph_similarity(aggregatePolicies, sampleSim),
 
     # Markdown
     Report = target(

@@ -1,6 +1,14 @@
 analyse_citescore <- function(topFactor, citeScore) {
     citeScore %<>%
-        select(Title, Publisher, CiteScore, SJR, `Top 10% (CiteScore Percentile)`, `Scopus Sub-Subject Area`, `Print ISSN`, `E-ISSN`) %>%
+        select(
+        Title, 
+        Publisher, 
+        CiteScore, 
+        SJR, 
+        `Top 10% (CiteScore Percentile)`, 
+        `Scopus Sub-Subject Area`, 
+        `Print ISSN`, 
+        `E-ISSN`) %>%
         rename(ISSN = `Print ISSN`, ISSN2 = `E-ISSN`) %>%
         pivot_longer(c("ISSN", "ISSN2"), names_repair = "unique") %>%
         rename(ISSN = value, Top10Perc = `Top 10% (CiteScore Percentile)`)
@@ -40,7 +48,13 @@ analyse_citescore <- function(topFactor, citeScore) {
             Badges
         )
     df <- anti_join(df, x, by = "Title")
-    y <- fuzzyjoin::stringdist_left_join(x, citeScore, by = "Title", max_dist = 3, distance_col = "Distance")
+    y <- fuzzyjoin::stringdist_left_join(
+        x, 
+        citeScore,
+        by = "Title", 
+        max_dist = 3, 
+        distance_col = "Distance"
+    )
 
     closest <- y %>%
         group_by(Title.x) %>%
@@ -76,10 +90,20 @@ analyse_citescore <- function(topFactor, citeScore) {
             DataCitation,
             Badges
         ) %>%
-        rename(Title = Title.x, ISSN = ISSN.x, Publisher = Publisher.x)
+        rename(
+            Title = Title.x,
+            ISSN = ISSN.x,
+            Publisher = Publisher.x
+        )
 
     # ! Fuzzy match again
-    y <- fuzzyjoin::stringdist_left_join(x, citeScore, by = "Title", max_dist = 4, distance_col = "Distance")
+    y <- fuzzyjoin::stringdist_left_join(
+        x,
+        citeScore,
+        by = "Title", 
+        max_dist = 4, 
+        distance_col = "Distance"
+    )
     x <- y[is.na(y$`Title.y`), ]
     y <- anti_join(y, x)
 

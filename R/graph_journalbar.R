@@ -3,8 +3,11 @@
 # Grouped by discipline.
 graph_journalbar <- function(graphdf) {
 
-  pal <- wes_palette("Darjeeling1")
-  pal2 <- wes_palette("Darjeeling2")
+  pal <- c(
+    "#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499",
+    "#44AA99", "#999933", "#882255", "#661100", "#6699CC", "#888888"
+  )
+  pal2 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
   graph <- graphdf %>%
     ggplot(aes(
