@@ -6,13 +6,13 @@ graph_disciplines <- function(df, meta) {
 
   participants <- df %>%
     select(ParticipantNumber, Discipline, Barrier)  %>%
-    distinct(ParticipantNumber, .keep_all = TRUE)  %>% 
-    group_by(Discipline) %>%
+    distinct(ParticipantNumber, .keep_all = TRUE)   %>%
+    group_by(Discipline)                            %>%
     tally()
 
   total_n <- participants %>%
     dplyr::filter(Discipline != "Other") %>%
-    select(n) %>%
+    select(n)                            %>%
     sum()
 
   title <- sprintf(
@@ -28,23 +28,23 @@ graph_disciplines <- function(df, meta) {
 
   x <- df %>%
     dplyr::filter(!is.na(Barrier)) %>%
-    group_by(Discipline, Barrier) %>%
+    group_by(Discipline, Barrier)  %>%
     tally()
 
   z <- df %>%
     dplyr::filter(!is.na(Discipline)) %>%
-    group_by(Discipline) %>%
-    distinct(ParticipantNumber) %>%
+    group_by(Discipline)              %>%
+    distinct(ParticipantNumber)       %>%
     tally(name = "TotalN")
 
   c <- df %>%
     dplyr::filter(!is.na(Barrier)) %>%
-    group_by(Barrier) %>%
+    group_by(Barrier)              %>%
     tally(name = "BarN")
 
   v <- df %>%
     dplyr::filter(Discipline != "Other") %>%
-    group_by(Discipline) %>%
+    group_by(Discipline)                 %>%
     tally(name = "DiscN")
 
   y <- full_join(x, z) %>%

@@ -1,16 +1,16 @@
 graph_similarity <- function(aggregatePolicies, boot.out) {
     
-    var <- aggregatePolicies %>%
-        dplyr::filter(Top10Perc == TRUE) %>%
+    var <- aggregatePolicies                     %>%
+        dplyr::filter(Top10Perc == TRUE)         %>%
         dplyr::distinct(Title, .keep_all = TRUE) %>%
         dplyr::select(CiteScore)
 
-    jMean <- mean(var$CiteScore)
-    dens <- density(boot.out$Mean)
-    df <- data.frame(x = dens$x, y = dens$y)
-    probs <- c(0, 0.25, 0.5, 0.75, 1)
+    jMean     <- mean(var$CiteScore)
+    dens      <- density(boot.out$Mean)
+    df        <- data.frame(x = dens$x, y = dens$y)
+    probs     <- c(0, 0.25, 0.5, 0.75, 1)
     quantiles <- quantile(boot.out$Mean, prob = probs)
-    loc <- df$y[which(abs(df$x - jMean) == min(abs(df$x - jMean)))]
+    loc       <- df$y[which(abs(df$x - jMean) == min(abs(df$x - jMean)))]
 
     df$quant <- factor(findInterval(df$x, quantiles))
     ggplot(df, aes(x, y)) +

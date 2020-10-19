@@ -10,13 +10,13 @@ aggregate_score <- function(df) {
         ScoreGrade = quantcut(df$OSS, q = 5),
     )
 
-    df$ScoreGrade <- ordered(df$ScoreGrade, levels = c(
+    levels(df$ScoreGrade) <- c(
         "None",
         "Low",
         "Medium",
         "High",
         "Very High"
-    ))
+    )
 
     df$Title <- coalesce(df$MatchTitle, df$Title)
 

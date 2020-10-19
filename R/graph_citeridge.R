@@ -3,12 +3,19 @@ graph_citeridge <- function(df) {
   df %<>%
     dplyr::filter(Top10Perc == TRUE)
 
-  totalN <- df %>%
-    ungroup() %>%
+  # Comparisons for p-values
+  out <- pairwise.wilcox.test(x = df$OSS, g = df$ScoreGrade,
+    p.adjust.method = "BH", exact = TRUE
+  ) %>%
+  broom::tidy()
+
+
+  totalN <- df                        %>%
+    ungroup()                         %>%
     distinct(Title, .keep_all = TRUE) %>%
     count()
   totalN <- sum(totalN$n)
-  
+
   df %<>%
     group_by(ScoreGrade) %>%
     mutate(N = paste0(ScoreGrade, ", n = ", n()))

@@ -45,10 +45,10 @@ y <- df[is.na(df$Submitted), ] %>%
 
 journalPolicies %<>%
   rename(MatchTitle = Title)
-df2 <- left_join(y, journalPolicies, by = "MatchTitle")
-df <- coalesce_join(df, df2, by = "Title")
+df2      <- left_join(y, journalPolicies, by = "MatchTitle")
+df       <- coalesce_join(df, df2, by = "Title")
 leftover <- df[is.na(df$Submitted), ]
-df <- anti_join(df, leftover, by = "Title")
+df       <- anti_join(df, leftover, by = "Title")
 
 message(
   "Final number of journals : ",

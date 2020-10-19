@@ -53,69 +53,64 @@ fetch_sherpa <- function(combinedCite, key) {
     }
 
     explore_json <- function(API) {
-        x <- API %>%
-            flatten() %>%
-            list.filter(!is.null(title)) %>%
+        x <- API                                                          %>%
+            flatten()                                                     %>%
+            list.filter(!is.null(title))                                  %>%
             list.select(
-                Titles = flatten(title),
-                ISSNS = flatten(issns),
-                PublisherPolicy = flatten(publisher_policy)
-            ) %>%
-            list.filter(!(is.null(PublisherPolicy$permitted_oa))) %>%
+                Titles          = flatten(title),
+                ISSNS           = flatten(issns),
+                PublisherPolicy = flatten(publisher_policy))              %>%
+            list.filter(!(is.null(PublisherPolicy$permitted_oa)))         %>%
             list.select(
-                Title = Titles$title,
-                ISSN = ISSNS$issn,
-                PermittedOA = flatten(PublisherPolicy$permitted_oa)
-            ) %>%
+                Title       = Titles$title,
+                ISSN        = ISSNS$issn,
+                PermittedOA = flatten(PublisherPolicy$permitted_oa))      %>%
             list.select(
                 Title,
                 ISSN,
                 Submitted = "submitted" %in% PermittedOA$article_version,
-                Accepted = "accepted" %in% PermittedOA$article_version,
-                Published = "published" %in% PermittedOA$article_version
-            ) %>%
-            list.rbind() %>%
+                Accepted  = "accepted" %in% PermittedOA$article_version,
+                Published = "published" %in% PermittedOA$article_version) %>%
+            list.rbind()                                                  %>%
             as_tibble()
 
-        y <- API %>%
-            flatten() %>%
-            list.filter(!is.null(title)) %>%
+        y <- API                                                 %>%
+            flatten()                                            %>%
+            list.filter(!is.null(title))                         %>%
             list.select(
-                Titles = flatten(title),
-                ISSNS = flatten(issns),
-                PublisherPolicy = flatten(publisher_policy)
-            ) %>%
+                Titles          = flatten(title),
+                ISSNS           = flatten(issns),
+                PublisherPolicy = flatten(publisher_policy))     %>%
             list.filter((is.null(PublisherPolicy$permitted_oa))) %>%
             list.select(
-                Title = Titles$title,
-                ISSN = ISSNS$issn,
+                Title     = Titles$title,
+                ISSN      = ISSNS$issn,
                 Submitted = FALSE,
-                Accepted = FALSE,
-                Published = FALSE
-            ) %>%
-            list.rbind() %>%
+                Accepted  = FALSE,
+                Published = FALSE)                               %>%
+            list.rbind()                                         %>%
             as_tibble()
 
         if (nrow(x) > 0 && nrow(y) > 0) {
-            z <- full_join(x, y) %>%
-                unnest_longer(Title) %>%
-                unnest_longer(ISSN) %>%
+            z <- full_join(x, y)         %>%
+                unnest_longer(Title)     %>%
+                unnest_longer(ISSN)      %>%
                 unnest_longer(Submitted) %>%
-                unnest_longer(Accepted) %>%
+                unnest_longer(Accepted)  %>%
                 unnest_longer(Published)
         } else if (!nrow(x) > 0) {
-            z <- y %>%
-                unnest_longer(Title) %>%
-                unnest_longer(ISSN) %>%
+            z <- y                       %>%
+                unnest_longer(Title)     %>%
+                unnest_longer(ISSN)      %>%
                 unnest_longer(Submitted) %>%
-                unnest_longer(Accepted) %>%
+                unnest_longer(Accepted)  %>%
                 unnest_longer(Published)
         } else {
-            z <- x %>%
-                unnest_longer(Title) %>%
-                unnest_longer(ISSN) %>%
+            z <- x                       %>%
+                unnest_longer(Title)     %>%
+                unnest_longer(ISSN)      %>%
                 unnest_longer(Submitted) %>%
-                unnest_longer(Accepted) %>%
+                unnest_longer(Accepted)  %>%
                 unnest_longer(Published)
         }
         return(z)
@@ -126,21 +121,21 @@ fetch_sherpa <- function(combinedCite, key) {
     #  Data Setup                #
     ##############################
 
-    journals <- combinedCite %>%
+    journals      <- combinedCite %>%
         ungroup()
     journals$ISSN <- gsub("[[:space:]]", "", journals$ISSN)
     journals$ISSN <- gsub("^(.{4})(.*)$", "\\1-\\2", journals$ISSN)
 
 
     nextJournals <- journals %>%
-        select(Title) %>%
+        select(Title)        %>%
         distinct()
 
     # * Here we set up the variables and objects required for parallel processing the data
     cores <- detectCores()
     message(c(("\n* SETUP: computer cores used: "), cores, " *\n"))
     cat("\nInitial journals : ", as.character((nrow(nextJournals)), "\n"))
-    opts <- list(progress = (function(n) setTxtProgressBar(pb, n)))
+    opts  <- list(progress = (function(n) setTxtProgressBar(pb, n)))
 
     ##############################
     #  Parse 1                   #
@@ -150,10 +145,10 @@ fetch_sherpa <- function(combinedCite, key) {
 
     # * Initiate API fetching
     count <- nrow(journals)
-    pb <- new_bar(count)
-    cl <- snow::makeCluster(cores, type = "SOCK")
+    pb    <- new_bar(count)
+    cl    <- snow::makeCluster(cores, type = "SOCK")
     registerDoSNOW(cl)
-    API <- fetch_json(opts, count, pb, nextJournals, key)
+    API   <- fetch_json(opts, count, pb, nextJournals, key)
     close(pb)
 
     if (length(API) > 0) {
@@ -176,8 +171,8 @@ fetch_sherpa <- function(combinedCite, key) {
         )
 
         nextJournals <- leftoverJournals %>%
-            ungroup() %>%
-            select(MatchTitle) %>%
+            ungroup()                    %>%
+            select(MatchTitle)           %>%
             distinct()
 
         cat("\nJournals left : ", as.character((nrow(nextJournals))))
@@ -191,9 +186,9 @@ fetch_sherpa <- function(combinedCite, key) {
 
     # * Initiate API fetching
     count <- nrow(nextJournals)
-    pb <- new_bar(count)
+    pb    <- new_bar(count)
     registerDoSNOW(cl)
-    API <- fetch_json(opts, count, pb, nextJournals, key)
+    API   <- fetch_json(opts, count, pb, nextJournals, key)
     close(pb)
 
     if (length(API) > 0) {
@@ -207,8 +202,8 @@ fetch_sherpa <- function(combinedCite, key) {
     ##############################
 
     if (exists("parse2")) {
-        foundJournals <- parse2 %>%
-            select(Title) %>%
+        foundJournals <- parse2        %>%
+            select(Title)              %>%
             rename(MatchTitle = Title) %>%
             distinct()
 
@@ -218,8 +213,8 @@ fetch_sherpa <- function(combinedCite, key) {
         )
 
         nextJournals <- leftoverJournals %>%
-            ungroup() %>%
-            select(ISSN) %>%
+            ungroup()                    %>%
+            select(ISSN)                 %>%
             distinct()
 
         nextJournals$ISSN <- gsub("[[:space:]]", "", nextJournals$ISSN)
@@ -235,9 +230,9 @@ fetch_sherpa <- function(combinedCite, key) {
 
     # * Initiate API fetching
     count <- nrow(nextJournals)
-    pb <- new_bar(count)
+    pb    <- new_bar(count)
     registerDoSNOW(cl)
-    API <- fetch_json(opts, count, pb, nextJournals, key, is_issn = TRUE)
+    API   <- fetch_json(opts, count, pb, nextJournals, key, is_issn = TRUE)
     close(pb)
 
     if (length(API) > 0) {
@@ -257,8 +252,8 @@ fetch_sherpa <- function(combinedCite, key) {
         leftoverJournals <- anti_join(leftoverJournals, foundJournals, by = "Title")
 
         nextJournals <- leftoverJournals %>%
-            ungroup() %>%
-            select(Title) %>%
+            ungroup()                    %>%
+            select(Title)                %>%
             distinct()
     }
 
@@ -307,8 +302,8 @@ fetch_sherpa <- function(combinedCite, key) {
     }
 
     nextPublishers <- leftoverJournals %>%
-        ungroup() %>%
-        select(Publisher) %>%
+        ungroup()                      %>%
+        select(Publisher)              %>%
         distinct()
 
     ##############################
@@ -319,9 +314,9 @@ fetch_sherpa <- function(combinedCite, key) {
 
     # * Initiate API fetching
     count <- nrow(nextPublishers)
-    pb <- new_bar(count)
+    pb    <- new_bar(count)
     registerDoSNOW(cl)
-    API <- fetch_json(opts, count, pb, nextPublishers, key, is_publisher = TRUE)
+    API   <- fetch_json(opts, count, pb, nextPublishers, key, is_publisher = TRUE)
     close(pb)
     count <- length(API)
 
@@ -369,15 +364,15 @@ fetch_sherpa <- function(combinedCite, key) {
     matchJournals <- sapply(listA, function(y) sapply(listB, function(x) grepl(y, x)))
 
     matchJournals %<>%
-        as.data.frame() %>%
-        rownames_to_column("id") %>%
+        as.data.frame()                                  %>%
+        rownames_to_column("id")                         %>%
         tidyr::gather(key = "key", value = "value", -id) %>%
         dplyr::filter(value == TRUE)
 
 
     # ! There is definitely a better way to do this but...
-    matchJournals$id <- str_replace_all(matchJournals$id, "[^[:alnum:]]", " ")
-    matchJournals$id <- trimws(matchJournals$id, which = "both")
+    matchJournals$id  <- str_replace_all(matchJournals$id, "[^[:alnum:]]", " ")
+    matchJournals$id  <- trimws(matchJournals$id, which = "both")
     matchJournals$key <- str_replace_all(matchJournals$key, "[^[:alnum:]]", " ")
     matchJournals$key <- str_replace_all(matchJournals$key, "[0-9]+", " ")
     matchJournals$key <- trimws(matchJournals$key, which = "both")
@@ -399,9 +394,9 @@ fetch_sherpa <- function(combinedCite, key) {
 
     # * Initiate API fetching
     count <- nrow(nextJournals)
-    pb <- new_bar(count)
+    pb    <- new_bar(count)
     registerDoSNOW(cl)
-    API <- fetch_json(opts, count, pb, nextJournals, key)
+    API   <- fetch_json(opts, count, pb, nextJournals, key)
     close(pb)
 
     if (length(API) > 0) {

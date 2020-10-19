@@ -51,21 +51,20 @@ analyse_citescore <- function(topFactor, citeScore) {
     y <- fuzzyjoin::stringdist_left_join(
         x, 
         citeScore,
-        by = "Title", 
-        max_dist = 3, 
+        by           = "Title", 
+        max_dist     = 3, 
         distance_col = "Distance"
     )
 
-    closest <- y %>%
-        group_by(Title.x) %>%
-        top_n(1, desc(Distance)) %>%
-        ungroup() %>%
+    closest <- y                     %>%
+        group_by(Title.x)            %>%
+        top_n(1, desc(Distance))     %>%
+        ungroup()                    %>%
         rename(
-            Title = Title.x,
+            Title      = Title.x,
             MatchTitle = Title.y,
-            ISSN = ISSN.x,
-            Publisher = Publisher.x,
-        ) %>%
+            ISSN       = ISSN.x,
+            Publisher  = Publisher.x) %>%
         select(-c(Publisher.y, ISSN.y, Distance))
 
     df <- coalesce_join(df, closest, by = "Title") %>%
@@ -88,20 +87,18 @@ analyse_citescore <- function(topFactor, citeScore) {
             RegRepPubBias,
             DataTransparency,
             DataCitation,
-            Badges
-        ) %>%
+            Badges)              %>%
         rename(
-            Title = Title.x,
-            ISSN = ISSN.x,
-            Publisher = Publisher.x
-        )
+            Title     = Title.x,
+            ISSN      = ISSN.x,
+            Publisher = Publisher.x)
 
     # ! Fuzzy match again
     y <- fuzzyjoin::stringdist_left_join(
         x,
         citeScore,
-        by = "Title", 
-        max_dist = 4, 
+        by           = "Title", 
+        max_dist     = 4, 
         distance_col = "Distance"
     )
     x <- y[is.na(y$`Title.y`), ]
@@ -112,40 +109,36 @@ analyse_citescore <- function(topFactor, citeScore) {
     # ! If true, this means there has been a mismatch
 
     y %<>%
-        rowwise() %>%
+        rowwise()                                   %>%
         mutate(Keep = checkmatch(Title.x, Title.y)) %>%
         dplyr::filter(Keep == TRUE)
 
     # Manual checks
     y %<>%
-        dplyr::filter(Title.x != "Motivation Science") %>%
-        dplyr::filter(Title.x != "Stigma and Health") %>%
-        dplyr::filter(Title.x != "Journal of Cognition") %>%
-        dplyr::filter(Title.x != "Social Psychological Bulletin") %>%
-        dplyr::filter(Title.x != "Brain Communications") %>%
+        dplyr::filter(Title.x != "Motivation Science")                %>%
+        dplyr::filter(Title.x != "Stigma and Health")                 %>%
+        dplyr::filter(Title.x != "Journal of Cognition")              %>%
+        dplyr::filter(Title.x != "Social Psychological Bulletin")     %>%
+        dplyr::filter(Title.x != "Brain Communications")              %>%
         dplyr::filter(Title.x != "Journal Of Comparative Psychology") %>%
-        dplyr::filter(Title.x != "Meta-Psychology") %>%
+        dplyr::filter(Title.x != "Meta-Psychology")                   %>%
         rename(
-            Title = Title.x,
+            Title      = Title.x,
             MatchTitle = Title.y,
-            ISSN = ISSN.x,
-            Publisher = Publisher.x,
-        ) %>%
+            ISSN       = ISSN.x,
+            Publisher  = Publisher.x)                                 %>%
         select(-c(Publisher.y, ISSN.y, Distance, Keep))
+
     df <- coalesce_join(df, y, by = "Title")
-
-
 
     df %<>%
         mutate_at(vars(DataCitation:Badges), ~ case_when(
             . == 3 ~ 1,
             . == 2 ~ 1,
             . == 1 ~ 1,
-            . == 0 ~ 0
-        )) %>%
-        # !
+            . == 0 ~ 0))                                %>%
         rename(SubjectArea = `Scopus Sub-Subject Area`) %>%
-        mutate(Discipline = case_when(
+        mutate(Discipline  = case_when(
             SubjectArea == "Agricultural and Biological Sciences (miscellaneous)" ~ "Agricultural and Biological Sciences",
             SubjectArea == "Agronomy and Crop Science" ~ "Agricultural and Biological Sciences",
             SubjectArea == "Animal Science and Zoology" ~ "Agricultural and Biological Sciences",
@@ -600,7 +593,7 @@ analyse_citescore <- function(topFactor, citeScore) {
         dplyr::filter(Title != "Meta-Psychology")
 
  df %<>%
-     group_by(GroupedDisc) %>%
+     group_by(GroupedDisc)             %>%
      distinct(Title, .keep_all = TRUE) %>%
      add_tally()
 

@@ -6,14 +6,12 @@ analyse_survey <- function(df) {
       ParticipantNumber,
       FORcode_1,
       CareerLevel,
-      OSBarriersList_1:OSBarriersList_21
-    )) %>%
-    select(-OSBarriersList_12_TEXT) %>%
+      OSBarriersList_1:OSBarriersList_21  )) %>%
+    select(-OSBarriersList_12_TEXT)          %>%
     tidyr::gather(
       key = "Barrier_Type",
       value = "value",
-      OSBarriersList_1:OSBarriersList_21
-    ) %>%
+      OSBarriersList_1:OSBarriersList_21)    %>%
     mutate(
       value = case_when(
         Barrier_Type == "OSBarriersList_1" &
@@ -56,7 +54,7 @@ analyse_survey <- function(df) {
         TRUE ~ NA_character_
       )
     )
-  df$value <- factor(df$value)
+  df$value        <- factor(df$value)
   df$Barrier_Type <- NULL
   colnames(df)[4] <- "Barrier"
 

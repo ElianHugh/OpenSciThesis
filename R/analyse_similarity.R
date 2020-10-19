@@ -7,17 +7,15 @@ analyse_similarity <- function(aggregatePolicies, citeScore) {
         )
     }
 
-    var <- citeScore %>%
+    var <- citeScore                                     %>%
         filter(`Top 10% (CiteScore Percentile)` == TRUE) %>%
-        distinct(Title, .keep_all = TRUE) %>%
+        distinct(Title, .keep_all = TRUE)                %>%
         dplyr::select(CiteScore)
 
-    var2 <- aggregatePolicies %>%
-        filter(Top10Perc == TRUE) %>%
+    var2 <- aggregatePolicies             %>%
+        filter(Top10Perc == TRUE)         %>%
         distinct(Title, .keep_all = TRUE) %>%
         select(CiteScore)
-
-    boot.out <- tibble(Mean = numeric(), SD = numeric())
 
     set.seed(1234)
     iterations <- 100000
@@ -29,10 +27,10 @@ analyse_similarity <- function(aggregatePolicies, citeScore) {
     opts <- list(progress = (function(n) setTxtProgressBar(pb, n)))
 
     boot.out <- foreach(i = 1:iterations,
-    .options.snow = opts,
-    .errorhandling = "remove",
-    .combine = 'rbind',
-    .packages = "tidyverse") %dopar% {
+    .options.snow         = opts,
+    .errorhandling        = "remove",
+    .combine              = 'rbind',
+    .packages             = "tidyverse") %dopar% {
          x <- bootstrap(var)
          return(x)
     }

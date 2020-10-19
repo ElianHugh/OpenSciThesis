@@ -3,12 +3,12 @@
 # Similar to a PRISMA diagram
 graph_flow <- function(statsFlow){
 
-topfacN <- statsFlow$topfacN
-citeN <- statsFlow$citeN
+topfacN     <- statsFlow$topfacN
+citeN       <- statsFlow$citeN
 differenceN <- statsFlow$differenceN
-combinedN <- statsFlow$combinedN
-filteredN <- statsFlow$filteredN
-finalN <- statsFlow$finalN
+combinedN   <- statsFlow$combinedN
+filteredN   <- statsFlow$filteredN
+finalN      <- statsFlow$finalN
 sherpadiffN <- statsFlow$sherpadiffN
 
 par(mar = c(1,4,1,4))

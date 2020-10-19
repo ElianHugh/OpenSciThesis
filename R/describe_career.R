@@ -2,7 +2,7 @@ describe_career <- function(barrierAnalysis) {
 totalN <- barrierAnalysis %>%
   distinct(ParticipantNumber) %>%
   tally()
-table <- barrierAnalysis %>%
+table  <- barrierAnalysis %>%
   # dplyr::filter(!is.na(Barrier)) %>%
   group_by(CareerLevel) %>%
   distinct(ParticipantNumber) %>%
@@ -18,8 +18,8 @@ table %<>%
 #   tally() %>%
 #   pivot_wider(names_from = CareerLevel, values_from = n)
 apa_table(table,
-  caption = "Descriptive Statistics for Career Levels",
-  escape = TRUE,
+  caption   = "Descriptive Statistics for Career Levels",
+  escape    = TRUE,
   longtable = TRUE
 )
 }

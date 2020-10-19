@@ -52,8 +52,8 @@ checkmatch <- function(x, y) {
     #' new_bar(count)
     new_bar <- function(count) {
         pb <- txtProgressBar(
-            min = 0,
-            max = count,
+            min   = 0,
+            max   = count,
             style = 3
         )
         pb
