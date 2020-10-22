@@ -7,11 +7,15 @@ aggregate_score <- function(df) {
         rowSums(na.rm = TRUE)
 
     df %<>% mutate(
-        ScoreGrade = quantcut(df$OSS, q = 5),
-    )
+        ScoreGrade = quantcut(df$OSS, q = 5)
+    ) %>%
+        group_by(ScoreGrade) %>%
+            mutate(ScoreMin = min(OSS), ScoreMax = max(OSS)) %>%
+            add_count(name = "ScoreGradeN") %>%
+            ungroup()
 
     levels(df$ScoreGrade) <- c(
-        "None",
+        "Very Low",
         "Low",
         "Medium",
         "High",

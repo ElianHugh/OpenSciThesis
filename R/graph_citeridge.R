@@ -31,17 +31,8 @@ graph_citeridge <- function(df) {
    )
 
   citeGraph <- df %>%
-   mutate(ScoreGrade = factor(ScoreGrade,
-      levels = c(
-        "Very High",
-        "High",
-        "Medium",
-        "Low",
-        "None"
-      )
-    )) %>%
     ggplot(aes(
-      y = ScoreGrade,
+      y = fct_reorder(paste0(ScoreGrade, " (", ScoreMin, " - ", ScoreMax, "),", "\n n = (", ScoreGradeN, ")"), ScoreMax, .desc = TRUE),
       x = CiteScore,
       fill = factor(stat(quantile))
     )) +
