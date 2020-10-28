@@ -16,9 +16,10 @@ graph_citeridge <- function(df) {
     count()
   totalN <- sum(totalN$n)
 
+  # * TODO fix this
   df %<>%
     group_by(ScoreGrade) %>%
-    mutate(N = paste0(ScoreGrade, ", n = ", n()))
+    mutate(N = paste0(ScoreGrade, "\n(n = ", n(), ")"))
 
   pal <- c(
     "#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499",
@@ -32,7 +33,7 @@ graph_citeridge <- function(df) {
 
   citeGraph <- df %>%
     ggplot(aes(
-      y = fct_reorder(paste0(ScoreGrade, " (", ScoreMin, " - ", ScoreMax, "),", "\n n = (", ScoreGradeN, ")"), ScoreMax, .desc = TRUE),
+      y = fct_reorder(N, ScoreMax, .desc = TRUE),
       x = CiteScore,
       fill = factor(stat(quantile))
     )) +

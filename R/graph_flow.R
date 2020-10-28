@@ -30,7 +30,7 @@ my_edge_length <- 0.09
 for (i in 1:length(my_label)) {
       if(i == 2) 
       {
-        textrect(mid = pos[i, ], radx = my_edge_length, rady = my_edge_length/2, lab = paste0("Records obtained from TOP \nfactor database \n (n = ", topfacN, ")"), cex = my_text_size, box.col = "#FFFFFF")
+        textrect(mid = pos[i, ], radx = my_edge_length, rady = my_edge_length/2, lab = paste0("Records obtained from\nTOP factor \ndatabase (n = ", topfacN, ")"), cex = my_text_size, box.col = "#FFFFFF")
       
       } else if (i == 4) {
              textrect(mid = pos[i, ], radx = my_edge_length, rady = my_edge_length*.8, lab = paste0("Records obtained from\n Scopus \n database \n (n = ", citeN, ")"), cex = my_text_size, box.col = "#FFFFFF")
