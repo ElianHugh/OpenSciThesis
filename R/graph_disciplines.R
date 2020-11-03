@@ -16,7 +16,7 @@ graph_disciplines <- function(df, meta) {
     sum()
 
   title <- sprintf(
-    "Perceived Institutional Barriers to Open Science by Discipline (n = %d)",
+    "Perceived Barriers to Open Science by Discipline (n = %d)",
     total_n
   )
 
@@ -24,7 +24,6 @@ graph_disciplines <- function(df, meta) {
     "#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499",
     "#44AA99", "#999933", "#882255", "#661100", "#6699CC", "#888888"
   )
-  pal2 <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
   x <- df %>%
     dplyr::filter(!is.na(Barrier)) %>%
@@ -70,7 +69,7 @@ graph_disciplines <- function(df, meta) {
     theme_apa(base_size = 11) +
     theme(text = element_text(size = 20)) +
     scale_y_continuous(expand = c(0, 0)) +
-    scale_fill_manual(name = "Discipline", values = c(pal, pal2))
+    scale_fill_manual(name = "Discipline", values = pal)
 
   freqDf <- df %>%
     full_join(c) %>%
@@ -78,6 +77,7 @@ graph_disciplines <- function(df, meta) {
 
   x <- freqDf %>%
     dplyr::filter(!is.na(Barrier)) %>%
+    dplyr::filter(Discipline != "Other") %>%
     ggplot(aes(x = fct_reorder(Barrier, BarN, .desc = TRUE), fill = fct_reorder(Discipline, DiscN, .desc = TRUE))) +
     geom_bar() +
     coord_flip() +
@@ -89,10 +89,13 @@ graph_disciplines <- function(df, meta) {
       text = element_text(size = 20),
       axis.title.y = element_blank(),
       axis.text.y = element_blank(),
-      axis.ticks.y = element_blank()
+      axis.ticks.y = element_blank(),
+      plot.caption = element_text(hjust = 0),
+      plot.title.position = "plot",
+      plot.caption.position = "plot"
     ) +
-    scale_fill_manual(name = "Discipline", values = c(pal, pal2))
+    scale_fill_manual(name = "Discipline", values = pal)
 
   figure <- ggarrange(graphDiscBarr, x, common.legend = TRUE, legend = "bottom", align = "h")
-  annotate_figure(figure, top = text_grob(title, face = "bold", size = 20))
+  #annotate_figure(figure, top = text_grob(title, face = "italic", size = 20, hjust = 1))
 }

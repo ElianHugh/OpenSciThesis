@@ -17,14 +17,18 @@ graph_similarity <- function(aggregatePolicies, boot.out) {
         geom_line() +
         geom_segment(size = 1, color = "red", aes(x = jMean, xend = jMean, y =.04, yend = loc)) +
         geom_ribbon(aes(ymin = 0, ymax = y, fill=quant)) + 
-        scale_x_continuous(breaks=quantiles, expand = c(0, 0)) + 
+        #scale_x_continuous(breaks=quantiles, expand = c(0, 0)) + 
         scale_fill_brewer(guide="none") +
         scale_y_continuous(expand = c(0, 0)) +
         theme_apa(base_size = 11) +
-        theme(text = element_text(size=20)) + 
-        xlab("Quantiles") +
+        theme(
+            text = element_text(size=20),
+            plot.caption = element_text(hjust = 0),
+            plot.title.position = "plot",
+            plot.caption.position = "plot"
+        ) + 
+        xlab("Cite Score Means") +
         ylab("Density") +
-        ggtitle("Distribution of Bootstrap Sample Means") +
         annotate("text", x= jMean + 0.9, y = loc + .05, label="Journal sample mean", size = 6) +
-        annotate("text", x= 14 + 0.9, y = .6, label = "Iterations = 100,000", size = 6)
+        annotate("text", x= 14 + 0.9, y = .4, label = "Iterations = 100,000", size = 6)
 }

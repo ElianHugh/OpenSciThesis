@@ -21,7 +21,6 @@ library(ggplot2)
 library(cowplot)
 library(diagram)
 library(ggridges)
-library(wesanderson)
 library(ggpubr)
 
 ## Parallel Processing ##
@@ -32,4 +31,4 @@ library(parallel)
 library(rmarkdown)
 library(papaja)
 library(knitr)
-#library(kableExtra)
+library(kableExtra)

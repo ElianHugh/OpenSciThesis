@@ -4,10 +4,9 @@
 graph_journalbar <- function(graphdf) {
 
   pal   <- c(
-    "#88CCEE", "#CC6677", "#DDCC77", "#117733", "#332288", "#AA4499",
-    "#44AA99", "#999933", "#882255", "#661100", "#6699CC", "#888888"
+    "#332288", "#AA4499", "#DDCC77", "#999933", "#44AA99", "#117733", "#CC6677",
+    "#88CCEE"
   )
-  pal2  <- c("#000000", "#E69F00", "#56B4E9", "#009E73", "#F0E442", "#0072B2", "#D55E00", "#CC79A7")
 
   graph <- graphdf %>%
     ggplot(aes(
@@ -29,11 +28,19 @@ graph_journalbar <- function(graphdf) {
       ymin = p.est - std.dev,
       ymax = p.est + std.dev
     )) +
-    ggtitle("Open Science Practice Implementation for TOP Factor Journals") +
     theme_apa() +
-    theme(legend.position = "none", text = element_text(size=20)) +
-    scale_fill_manual(values = c(pal, pal2)) +
-    ylab("Percentage of journals that implement practice")
+    theme(
+      legend.position = "none", 
+      text = element_text(size=20), 
+      plot.title=element_text(
+        size = rel(1), 
+        face = "italic"),
+      plot.caption = element_text(hjust = 0),
+      plot.title.position = "plot",
+      plot.caption.position = "plot"
+    ) +
+    scale_fill_manual(values = pal) +
+    ylab("Percentage of journals that implement policy")
 
   ggdraw(graph) +
     draw_label("Open Access", x = 0.05, y = 0.75, angle = 90)

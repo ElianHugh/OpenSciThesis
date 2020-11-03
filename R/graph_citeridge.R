@@ -47,14 +47,20 @@ graph_citeridge <- function(df) {
       quantiles = 4,
       quantile_lines = TRUE
     ) + 
-    ggtitle(title) +
       scale_x_continuous(expand = c(0, 0)) +
       scale_y_discrete(expand = c(0, 0)) + 
       theme_ridges(grid = FALSE, center_axis_labels = TRUE) +
       theme_apa() +
-      ylab("Open Science Implementation") +
+      ylab("Open Science Policy") +
       scale_fill_manual(values = pal) +
-      theme(axis.ticks = element_blank(), text = element_text(size = 20), legend.position = "none")
+      theme(
+        axis.ticks = element_blank(), 
+        text = element_text(size = 20), 
+        legend.position = "none",
+        plot.caption = element_text(hjust = 0),
+      plot.title.position = "plot",
+      plot.caption.position = "plot"
+      )
 
   citeGraph
 }
